@@ -1,5 +1,7 @@
 import React from 'react';
 
+import LoginProvider from './context/loginProvider';
+
 import { NavigationContainer } from '@react-navigation/native';
 
 import { Provider as PaperProvider } from 'react-native-paper';
@@ -16,17 +18,19 @@ export default function App() {
   const combinedTheme = appThemes();
 
   return (
-  <PaperProvider theme={combinedTheme}>
-    <SafeAreaProvider style={{ flex: 1 }}>
-      <NavigationContainer theme={combinedTheme}>
+  <LoginProvider>
+    <PaperProvider theme={combinedTheme}>
+      <SafeAreaProvider style={{ flex: 1 }}>
+        <NavigationContainer theme={combinedTheme}>
 
-        <BottomTab />
-          
-      </NavigationContainer>
+          <BottomTab />
+            
+        </NavigationContainer>
+        
+        <MyFab />
       
-      <MyFab />
-    
-    </SafeAreaProvider>
-  </PaperProvider >
+      </SafeAreaProvider>
+    </PaperProvider >
+  </LoginProvider>
   );
 }

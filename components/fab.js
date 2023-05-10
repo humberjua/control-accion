@@ -12,6 +12,7 @@ const MyFab = () => (
 
 const styles = StyleSheet.create({
   fab: {
+    display: 'none',
     position: 'absolute',
     margin: 30,
     marginBottom: 105,

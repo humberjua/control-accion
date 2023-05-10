@@ -1,8 +1,8 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 
-import AllCharts from '../screens/allCharts.js';
-import MyCharts from '../screens/myCharts.js';
+import AllCharts from '../screens/charts/allCharts.js';
+import MyCharts from '../screens/charts/myCharts.js';
 
 const Tab = createMaterialTopTabNavigator();
 
