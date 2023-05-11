@@ -1,13 +1,11 @@
-import React from 'react';
-
-import { Switch } from 'react-native-paper';
+import React from 'react'
+import { Switch } from 'react-native-paper'
 
 const SwitchGlobal = () => {
-  const [isSwitchOn, setIsSwitchOn] = React.useState(false);
+  const [isSwitchOn, setIsSwitchOn] = React.useState(false)
+  const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn)
 
-  const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
+  return <Switch value={isSwitchOn} onValueChange={onToggleSwitch} />
+}
 
-  return <Switch value={isSwitchOn} onValueChange={onToggleSwitch} />;
-};
-
-export default SwitchGlobal;
+export default SwitchGlobal
