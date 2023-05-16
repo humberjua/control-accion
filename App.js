@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { Provider as PaperProvider } from 'react-native-paper'
 import appThemes from './utils/appThemes'
 import BottomTab from './navigation/bottomTabs'
-import MyFab from './components/fab'
+import NewButton from './experimental/fabPapers'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 export default function App () {
@@ -16,7 +16,7 @@ export default function App () {
           <NavigationContainer theme={combinedTheme}>
             <BottomTab />
           </NavigationContainer>
-          <MyFab />
+          <NewButton />
         </SafeAreaProvider>
       </PaperProvider>
     </LoginProvider>
