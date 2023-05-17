@@ -169,6 +169,7 @@ mutation EditUser($idUser: ID!, $password: String, $firstName: String, $secondNa
 }
 `
 
+// Este Screen está incompleto
 export const EditUserScreen = ({ preValues }) => {
   // console.log('preValues= \n', preValues)
   const { control, handleSubmit, watch, formState: { errors } } = useForm(

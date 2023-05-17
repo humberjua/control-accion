@@ -1,4 +1,4 @@
-import { gql, useQuery } from '@apollo/client'
+import { gql, useLazyQuery, useQuery } from '@apollo/client'
 
 /*
 Query:allUsers: Int!
@@ -112,25 +112,28 @@ query Me {
     hiredDate
     active
     isSuperUser
+    gender
+    birthday
+    age
   }
 }
 
 `
 
-export const useMe = ({ token }) => {
-  const { loading, error, data } = useQuery(
-    meQ,
-    { variables: {} },
-    { headers: { Authorization: 'BEARER' + token } }
-  )
+// export const useMe = (token) => {
+export const useMe = () => {
+  const { loading, error, data } = useQuery(meQ)
   if (loading) {
     return 'Loading...'
   }
   if (error) {
     return `Error! ${error}`
   }
-
-  const me = data.me.map(el => el)
-
-  return { me }
+  const meData = data
+  if (meData) {
+    console.info(meData)
+    return meData
+  } else {
+    return {}
+  }
 }

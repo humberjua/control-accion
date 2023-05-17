@@ -1,10 +1,11 @@
 import * as yup from 'yup'
 
 export const loginValidationSchema = yup.object().shape({
-  email: yup
+  nickName: yup
     .string()
-    .email()
-    .required('E-mail is required'),
+    .min(3, 'Too short!')
+    .max(30, 'Too long!')
+    .required('Nickname (user name) is required'),
   password: yup
     .string()
     .min(5, 'Too short!')

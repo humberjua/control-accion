@@ -1,6 +1,5 @@
 import { View, StyleSheet, Text } from 'react-native'
 import { Controller } from 'react-hook-form'
-// import { Picker } from '@react-native-picker/picker'
 import SelectDropdown from 'react-native-select-dropdown'
 
 const CustomComboBox = ({
@@ -34,17 +33,6 @@ const CustomComboBox = ({
                 return item
               }}
             />
-            // <Picker
-            //   selectedValue={value}
-            //   onValueChange={onChange}
-            //   onBlur={onBlur}
-            //   style={styles.input}
-            // >
-            //   {items.map(el => {
-            //     return (
-            //       <Picker.Item label={el.toString()} key={el} value={el} />)
-            //   })}
-            // </Picker>
           )}
         />
       </View>
