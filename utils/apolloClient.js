@@ -10,47 +10,49 @@ const httpLink = createHttpLink({
   uri: 'http://192.168.100.154:4000'
 })
 
-// HJ
+// HJ ===> funciona, pero solo reiniciando la aplicación
 let tokenValue
 const getValue = async () => {
-  // AsyncStorage.clear()
-  AsyncStorage.getItem('token').then(value => {
+  AsyncStorage.flushGetRequests()
+  await AsyncStorage.getItem('token').then(async value => {
     tokenValue = `BEARER ${value}`
+    console.log('tokenValue on ApolloClient side (then)= \n', tokenValue)
   }
   ).catch(
     value => {
       tokenValue = `BEARER ${value}`
+      console.log('tokenValue on ApolloClient side (catch)= \n', tokenValue)
     }
   )
-  console.log('tokenValue on ApolloClient side= \n', tokenValue)
+  if (tokenValue === 'BEARER ' + null) {
+    tokenValue = await AsyncStorage.getItem('token')
+    AsyncStorage.flushGetRequests()
+    console.log('tokenValue on ApolloClient side (tokenValue===null)= \n', tokenValue)
+  }
   return await tokenValue
 }
-
-// const clearData = async () => {
-//   // await AsyncStorage.clear()
-//   const keys = await AsyncStorage.getAllKeys().then()
-//   // await AsyncStorage.multiRemove(keys)
-//   console.log(keys[0])
-// }
-
-// FRANCÓ
+// https://media.licdn.com/dms/image/D4D03AQHQIMFq29YR_w/profile-displayphoto-shrink_200_200/0/1674560532914?e=1689811200&v=beta&t=em199B96wPlX0rhAIPNJ9mrn5YU0UcwfSLB9ielQRYY
+// FRANCÓ (por ahora no funciona)
 // let tokenValue
 // export const getValue = async () => {
 //   // await AsyncStorage.multiRemove('token')
-//   if (!tokenValue) {
+//   AsyncStorage.flushGetRequests()
+//   tokenValue = await AsyncStorage.getItem('token')
+//   console.log('tokenValue= \n', tokenValue)
+//   if (tokenValue === undefined) {
 //     try {
 //       const storedToken = await AsyncStorage.getItem('token')
-//       tokenValue = `Bearer ${storedToken}`
+//       tokenValue = `BEARER ${storedToken}`
 //     } catch (e) {
 //       // no se que se puede hacer aca, asumo que desloguear
 //       console.log('No token stored was found')
 //     }
 //   }
-//   return await tokenValue
+//   console.log('tokenValue from apolloClient side= \n', await tokenValue)
+//   return tokenValue
 // }
 
 const authLink = setContext(async (_, { headers }) => {
-  // await clearData()
   return {
     headers: {
       ...headers,
@@ -59,9 +61,16 @@ const authLink = setContext(async (_, { headers }) => {
   }
 })
 
-const createApolloClient = () => new ApolloClient({
-  link: authLink.concat(httpLink),
-  cache: new InMemoryCache()
-})
+const createApolloClient = () => {
+  const client = new ApolloClient({
+    link: authLink.concat(httpLink),
+    cache: new InMemoryCache()
+  })
+  return client
+}
+// const createApolloClient = () => new ApolloClient({
+//   link: authLink.concat(httpLink),
+//   cache: new InMemoryCache()
+// })
 
 export default createApolloClient

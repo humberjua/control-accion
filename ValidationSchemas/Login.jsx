@@ -4,7 +4,8 @@ import {
   View,
   Button,
   StyleSheet,
-  Platform
+  Platform,
+  Alert
 } from 'react-native'
 import StyledText from '../styles/StyledText.jsx'
 import StyledTextInput from '../styles/StyledTextInput.jsx'
@@ -27,18 +28,24 @@ mutation Login($userName: String!, $password: String!, $userPlatform: String!, $
 let newData
 let tokenUserDevice
 let userToken
+const notAllowedCharacters = ['*', '%', '(', ')', '>', '/', '<', '=', '"', '\\', '<', '`', '\'']
 
 const FormikInputValue = ({ name, ...props }) => {
   const [field, meta, helpers] = useField(name)
   const { data, setData } = useContext(DataContext)
   newData = data
-
   return (
     <>
       <StyledTextInput
         error={meta.error}
         value={field.value}
         onChangeText={value => {
+          const lastChar = String(value).charAt(String(value).length - 1)
+          if (notAllowedCharacters.includes(lastChar)) {
+            Alert.alert('Warning!', `character ${lastChar} is not allowed`)
+
+            value = String(value).replace(lastChar, '')
+          }
           helpers.setValue(value)
           field.name === 'nickName' ? newData.nickName = value : newData.password = value
           newData.tokenDevice = tokenUserDevice
@@ -53,9 +60,11 @@ const FormikInputValue = ({ name, ...props }) => {
 }
 
 export default function LogInScreen ({ navigation }) {
-  // let [ut, setUt] = useState(null)
+  AsyncStorage.clear()
+  AsyncStorage.flushGetRequests()
   const { data, setData } = useContext(DataContext)
   const [login, dataLogedUser] = useMutation(gqlLoginM)
+  const [waiting, setWaiting] = useState(false)
   try {
     const [tokenDevice, setTokenDevice] = useState(null)
     useEffect(() => { GetToken().then(setTokenDevice) }, [])
@@ -63,69 +72,69 @@ export default function LogInScreen ({ navigation }) {
   } catch (error) {
     console.log('error getToken')
   }
-  AsyncStorage.setItem('token', '')
   return (
-    <Formik
-      validationSchema={loginValidationSchema}
-      initialValues={data}
-      onSubmit={
-          async (values) => {
-            try {
-              await login({
-                variables:
-                {
-                  userName: values.nickName,
-                  password: values.password,
-                  userPlatform: Platform.OS,
-                  idDevice: values.idDevice,
-                  tokenDevice: values.idDevice,
-                  loged: true
-                }
-              })
-              // if (dataLogedUser.data) {
-              // userToken = dataLogedUser.data.login.value
-              // ut = userToken
-              // setUt(ut)
-              console.log('onSubmit')
-              console.log('userToken= \n', userToken)
-              values.idDevice = tokenUserDevice
-              values.loged = true
-              newData.loged = true
-              setData({ ...values, loged: true, userToken })
-              await AsyncStorage.setItem('token', userToken)
-              // navigation.navigate('BottomTabs')
-              // }
-            } catch (error) {
-              console.error(error)
-              return false
+    <>
+      <Formik
+        validationSchema={loginValidationSchema}
+        initialValues={data}
+        onSubmit={
+            async (values) => {
+              await AsyncStorage.clear()
+              await AsyncStorage.multiRemove(['token'], () => null)
+              AsyncStorage.flushGetRequests()
+              setWaiting(true)
+              try {
+                await login({
+                  variables:
+                  {
+                    userName: values.nickName,
+                    password: values.password,
+                    userPlatform: Platform.OS,
+                    idDevice: values.idDevice,
+                    tokenDevice: values.idDevice,
+                    loged: true
+                  }
+                })
+                await AsyncStorage.clear()
+                console.log('userToken onSubmit= \n', userToken)
+                values.idDevice = tokenUserDevice
+                values.loged = true
+                newData.loged = true
+                setData({ ...values, loged: true, userToken })
+                await AsyncStorage.setItem('token', userToken)
+                setWaiting(false)
+                AsyncStorage.flushGetRequests()
+              } catch (error) {
+                console.error(error)
+                setWaiting(false)
+                return false
+              }
             }
           }
-        }
-    >
-      {({ handleSubmit }) => {
-        if (dataLogedUser.data) {
-          console.log('handleSubmit')
-          // AsyncStorage.removeItem('token')
-          userToken = dataLogedUser.data.login.value
-          console.log('userToken= \n', userToken)
-          // AsyncStorage.setItem('token', userToken)
-        }
-        return (
-          <View style={styles.form}>
-            <FormikInputValue
-              name='nickName'
-              placeholder='Username'
-            />
-            <FormikInputValue
-              name='password'
-              placeholder='Password'
-              secureTextEntry
-            />
-            <Button onPress={handleSubmit} title='Log In' />
-          </View>
-        )
-      }}
-    </Formik>
+      >
+        {({ handleSubmit }) => {
+          if (dataLogedUser.data) {
+            userToken = dataLogedUser.data.login.value
+            console.log('handleSubmit userToken= \n', userToken)
+          }
+          return (
+            <View style={styles.form}>
+              <FormikInputValue
+                name='nickName'
+                placeholder='Username'
+              />
+              <FormikInputValue
+                name='password'
+                placeholder='Password'
+                secureTextEntry
+              />
+              <Button onPress={handleSubmit} title='Log In' />
+            </View>
+          )
+        }}
+      </Formik>
+      <CustomActivityIndicator visible={waiting} />
+    </>
   )
 }
 

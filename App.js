@@ -6,7 +6,6 @@ import { FirstScreen } from './screens/firstScreen.js'
 const apolloClient = createApolloClient()
 
 export default function App () {
-  console.info(this.localStorage)
   return (
     <DataProvider>
       <ApolloProvider client={apolloClient}>

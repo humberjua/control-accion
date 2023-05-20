@@ -18,20 +18,24 @@ async function clearData () {
   await AsyncStorage.multiRemove(['token'])
   await AsyncStorage.setItem('token', '')
   ApolloConsumer(client => client.resetStore())
+  AsyncStorage.flushGetRequests()
 }
 
 export default function SettingsScreen (navigation) {
   const { setData } = useContext(DataContext)
   return (
-    <View>
-      <Text>This is the Settings Screen!</Text>
-      <Button
-        title='Logout'
-        onPress={async () => {
-          setData({ ...userDefault, loged: false, userToken: '' })
-          await clearData()
-        }}
-      />
-    </View>
+    <>
+      <View>
+        <Text>This is the Settings Screen!</Text>
+        <Button
+          title='Logout'
+          onPress={async () => {
+            setData({ ...userDefault, loged: false, userToken: '' })
+            await AsyncStorage.clear()
+            await clearData()
+          }}
+        />
+      </View>
+    </>
   )
 }
