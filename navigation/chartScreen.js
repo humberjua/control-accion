@@ -15,14 +15,14 @@ const Tab = createMaterialTopTabNavigator()
   los valores de preferencia de pantalla del usuario (reciclar codigo a traves de componentes).
 */
 
-const defaultTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: 'rgb(63, 73, 72)',
-    card: 'rgb(230, 241, 240)'
-  }
-}
+// const defaultTheme = {
+//   ...DefaultTheme,
+//   colors: {
+//     ...DefaultTheme.colors,
+//     primary: 'rgb(63, 73, 72)',
+//     card: 'rgb(230, 241, 240)'
+//   }
+// }
 
 const darkTheme = {
   ...DarkTheme,

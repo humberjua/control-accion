@@ -43,7 +43,6 @@ const FormikInputValue = ({ name, ...props }) => {
           const lastChar = String(value).charAt(String(value).length - 1)
           if (notAllowedCharacters.includes(lastChar)) {
             Alert.alert('Warning!', `character ${lastChar} is not allowed`)
-
             value = String(value).replace(lastChar, '')
           }
           helpers.setValue(value)

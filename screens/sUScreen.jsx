@@ -1,5 +1,6 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 /*
   En esta parte deberán estar las pestañas (ventanas) que permitan a los "SuperUser" poder:
@@ -80,9 +81,12 @@ function SuperUserScreen () {
           name='SUCompanies'
           component={SUCompanies}
           options={{
+            tabBarLabel: 'Companies',
             tabBarActiveTintColor: 'rgb(111, 247, 246)',
             tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
-            tabBarScrollEnabled: false // seguramente será true
+            tabBarScrollEnabled: false, // seguramente será true
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name='factory' color={color} size={26} />)
           }}
         />
 
@@ -90,8 +94,11 @@ function SuperUserScreen () {
           name='SUUsers'
           component={SUUsers}
           options={{
+            tabBarLabel: 'Users',
             tabBarActiveTintColor: 'rgb(111, 247, 246)',
-            tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' }
+            tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name='account-details' color={color} size={26} />)
           }}
         />
 
@@ -99,8 +106,11 @@ function SuperUserScreen () {
           name='SUStandardSector'
           component={SUStandardSector}
           options={{
+            tabBarLabel: 'Std Sector',
             tabBarActiveTintColor: 'rgb(111, 247, 246)',
-            tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' }
+            tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name='select-place' color={color} size={26} />)
           }}
         />
 
@@ -108,8 +118,11 @@ function SuperUserScreen () {
           name='SUJobRole'
           component={SUJobRole}
           options={{
+            tabBarLabel: 'Std Job Role',
             tabBarActiveTintColor: 'rgb(111, 247, 246)',
-            tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' }
+            tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name='office-building' color={color} size={26} />)
           }}
         />
 
@@ -117,8 +130,11 @@ function SuperUserScreen () {
           name='SUNotifications'
           component={SUNotifications}
           options={{
+            tabBarLabel: 'Notifications',
             tabBarActiveTintColor: 'rgb(111, 247, 246)',
-            tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' }
+            tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name='email-edit' color={color} size={26} />)
           }}
         />
 
@@ -126,8 +142,11 @@ function SuperUserScreen () {
           name='SUStandardTicket'
           component={SUStandardTicket}
           options={{
+            tabBarLabel: 'Std Tickets',
             tabBarActiveTintColor: 'rgb(111, 247, 246)',
-            tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' }
+            tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name='form-select' color={color} size={26} />)
           }}
         />
 

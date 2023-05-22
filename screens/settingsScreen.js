@@ -31,7 +31,6 @@ export default function SettingsScreen (navigation) {
           title='Logout'
           onPress={async () => {
             setData({ ...userDefault, loged: false, userToken: '' })
-            await AsyncStorage.clear()
             await clearData()
           }}
         />

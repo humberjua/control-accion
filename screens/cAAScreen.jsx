@@ -1,5 +1,6 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 /*
   En esta parte hay que importar las ventanas que utilizará el "CompanyAppAdmin"
@@ -74,12 +75,19 @@ function CompnayAppAdminScreen () {
       >
 
         <Tab.Screen
+          // En esta pestaña están incluidos los agregados y/o ediciones de:
+          // 1)_ Company Unit Bussines (propio de cada empresa)
+          // 2)_ Company Job Role ==> Vinculado a Standard Job Role del SSU
+          // 3)_ Company Sectors ==> Vinculado a Standard Sectors del SSU
           name='CAASCompany'
           component={CAASCompany}
           options={{
+            tabBarLabel: 'Company',
             tabBarActiveTintColor: 'rgb(111, 247, 246)',
             tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
-            tabBarScrollEnabled: false // este creo que va a ser true
+            tabBarScrollEnabled: false, // este creo que va a ser true
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name='factory' color={color} size={26} />)
           }}
         />
 
@@ -87,8 +95,11 @@ function CompnayAppAdminScreen () {
           name='CAASUsers'
           component={CAASUsers}
           options={{
+            tabBarLabel: 'Users',
             tabBarActiveTintColor: 'rgb(111, 247, 246)',
-            tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' }
+            tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name='account-details' color={color} size={26} />)
           }}
         />
 
@@ -96,8 +107,11 @@ function CompnayAppAdminScreen () {
           name='CAASNotifications'
           component={CAASNotifications}
           options={{
+            tabBarLabel: 'Notifications',
             tabBarActiveTintColor: 'rgb(111, 247, 246)',
-            tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' }
+            tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name='email-box' color={color} size={26} />)
           }}
         />
 
@@ -105,8 +119,11 @@ function CompnayAppAdminScreen () {
           name='CAASCharts'
           component={CAASCharts}
           options={{
+            tabBarLabel: 'Charts',
             tabBarActiveTintColor: 'rgb(111, 247, 246)',
-            tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' }
+            tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name='chart-bar-stacked' color={color} size={26} />)
           }}
         />
 
@@ -114,8 +131,11 @@ function CompnayAppAdminScreen () {
           name='CAASContact'
           component={CAASContact}
           options={{
+            tabBarLabel: 'Contact',
             tabBarActiveTintColor: 'rgb(111, 247, 246)',
-            tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' }
+            tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name='contacts' color={color} size={26} />)
           }}
         />
 

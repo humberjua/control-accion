@@ -1,4 +1,5 @@
-import React, { useContext } from 'react'
+import React from 'react'
+// import React, { useContext } from 'react'
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -8,7 +9,7 @@ import SearchScreen from '../screens/searchScreen'
 import SettingsScreen from '../screens/settingsScreen'
 import SuperUserScreen from '../screens/sUScreen.jsx'
 import CompnayAppAdminScreen from '../screens/cAAScreen.jsx'
-import { DataContext } from '../context/DataContext'
+// import { DataContext } from '../context/DataContext'
 import { useMe } from '../hooks/userQH'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
@@ -36,9 +37,9 @@ function MyTabs ({ navigation }) {
 
     */
   AsyncStorage.flushGetRequests()
-  const { data, setData } = useContext(DataContext)
-  const insets = useSafeAreaInsets()
   const { me } = useMe()
+  // const { data, setData } = useContext(DataContext)
+  const insets = useSafeAreaInsets()
   if (me) {
     isCAA = me.isCompanyAppAdmin
     isSU = me.isSuperUser
@@ -107,7 +108,7 @@ function MyTabs ({ navigation }) {
               name='CompnayAppAdminScreen'
               component={CompnayAppAdminScreen} // ==> companyAppMenuScreen
               options={{
-                tabBarLabel: 'App Admin Menu',
+                tabBarLabel: 'Admin Menu',
                 tabBarIcon: ({ color }) => (
                   <MaterialCommunityIcons name='account-alert' color={color} size={26} />
                 )
