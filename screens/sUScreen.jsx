@@ -81,9 +81,10 @@ function SuperUserScreen () {
           name='SUCompanies'
           component={SUCompanies}
           options={{
-            tabBarLabel: 'Companies',
-            tabBarActiveTintColor: 'rgb(111, 247, 246)',
-            tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
+            // tabBarLabel: 'Companies',
+            tabBarLabel: '',
+            tabBarActiveTintColor: 'rgb(211, 147, 146)',
+            tabBarIndicatorStyle: { backgroundColor: 'rgb(211, 147, 244)' },
             tabBarScrollEnabled: false, // seguramente será true
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name='factory' color={color} size={26} />)
@@ -94,8 +95,9 @@ function SuperUserScreen () {
           name='SUUsers'
           component={SUUsers}
           options={{
-            tabBarLabel: 'Users',
-            tabBarActiveTintColor: 'rgb(111, 247, 246)',
+            // tabBarLabel: 'Users',
+            tabBarLabel: '',
+            tabBarActiveTintColor: 'rgb(211, 147, 146)',
             tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name='account-details' color={color} size={26} />)
@@ -106,8 +108,9 @@ function SuperUserScreen () {
           name='SUStandardSector'
           component={SUStandardSector}
           options={{
-            tabBarLabel: 'Std Sector',
-            tabBarActiveTintColor: 'rgb(111, 247, 246)',
+            // tabBarLabel: 'Std Sector',
+            tabBarLabel: '',
+            tabBarActiveTintColor: 'rgb(211, 147, 146)',
             tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name='select-place' color={color} size={26} />)
@@ -118,8 +121,9 @@ function SuperUserScreen () {
           name='SUJobRole'
           component={SUJobRole}
           options={{
-            tabBarLabel: 'Std Job Role',
-            tabBarActiveTintColor: 'rgb(111, 247, 246)',
+            // tabBarLabel: 'Std Job Role',
+            tabBarLabel: '',
+            tabBarActiveTintColor: 'rgb(211, 147, 146)',
             tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name='office-building' color={color} size={26} />)
@@ -130,8 +134,9 @@ function SuperUserScreen () {
           name='SUNotifications'
           component={SUNotifications}
           options={{
-            tabBarLabel: 'Notifications',
-            tabBarActiveTintColor: 'rgb(111, 247, 246)',
+            // tabBarLabel: 'Notifications',
+            tabBarLabel: '',
+            tabBarActiveTintColor: 'rgb(211, 147, 146)',
             tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name='email-edit' color={color} size={26} />)
@@ -142,8 +147,9 @@ function SuperUserScreen () {
           name='SUStandardTicket'
           component={SUStandardTicket}
           options={{
-            tabBarLabel: 'Std Tickets',
-            tabBarActiveTintColor: 'rgb(111, 247, 246)',
+            // tabBarLabel: 'Std Tickets',
+            tabBarLabel: '',
+            tabBarActiveTintColor: 'rgb(211, 147, 146)',
             tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name='form-select' color={color} size={26} />)

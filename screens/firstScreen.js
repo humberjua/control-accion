@@ -9,6 +9,7 @@ import { Stack } from '../navigation/navigation.js'
 import LoginScreen from '../ValidationSchemas/Login.jsx'
 import { DataContext } from '../context/DataContext.js'
 import appThemes from '../utils/appThemes.js'
+// import { Logo } from '../components/Logo.js'
 
 export const FirstScreen = () => {
   const { data, setData } = useContext(DataContext)
@@ -21,7 +22,8 @@ export const FirstScreen = () => {
           <NavigationContainer theme={combinedTheme}>
             <Stack.Navigator
               screenOptions={{
-                headerShown: true,
+                headerShown: false,
+                // headerBackImage: { Logo },
                 animationEnabled: true,
                 detachPreviousScreen: true
               }}

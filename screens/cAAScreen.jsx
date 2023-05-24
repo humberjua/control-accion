@@ -82,8 +82,9 @@ function CompnayAppAdminScreen () {
           name='CAASCompany'
           component={CAASCompany}
           options={{
-            tabBarLabel: 'Company',
-            tabBarActiveTintColor: 'rgb(111, 247, 246)',
+            // tabBarLabel: 'Company',
+            tabBarLabel: '',
+            tabBarActiveTintColor: 'lightyellow',
             tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
             tabBarScrollEnabled: false, // este creo que va a ser true
             tabBarIcon: ({ color }) => (
@@ -95,8 +96,9 @@ function CompnayAppAdminScreen () {
           name='CAASUsers'
           component={CAASUsers}
           options={{
-            tabBarLabel: 'Users',
-            tabBarActiveTintColor: 'rgb(111, 247, 246)',
+            // tabBarLabel: 'Users',
+            tabBarLabel: '',
+            tabBarActiveTintColor: 'lightyellow',
             tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name='account-details' color={color} size={26} />)
@@ -107,8 +109,9 @@ function CompnayAppAdminScreen () {
           name='CAASNotifications'
           component={CAASNotifications}
           options={{
-            tabBarLabel: 'Notifications',
-            tabBarActiveTintColor: 'rgb(111, 247, 246)',
+            // tabBarLabel: 'Notifications',
+            tabBarLabel: '',
+            tabBarActiveTintColor: 'lightyellow',
             tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name='email-box' color={color} size={26} />)
@@ -119,8 +122,9 @@ function CompnayAppAdminScreen () {
           name='CAASCharts'
           component={CAASCharts}
           options={{
-            tabBarLabel: 'Charts',
-            tabBarActiveTintColor: 'rgb(111, 247, 246)',
+            // tabBarLabel: 'Charts',
+            tabBarLabel: '',
+            tabBarActiveTintColor: 'lightyellow',
             tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name='chart-bar-stacked' color={color} size={26} />)
@@ -131,8 +135,9 @@ function CompnayAppAdminScreen () {
           name='CAASContact'
           component={CAASContact}
           options={{
-            tabBarLabel: 'Contact',
-            tabBarActiveTintColor: 'rgb(111, 247, 246)',
+            // tabBarLabel: 'Contact',
+            tabBarLabel: '',
+            tabBarActiveTintColor: 'lightyellow',
             tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name='contacts' color={color} size={26} />)
