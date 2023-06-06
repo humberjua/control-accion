@@ -8,7 +8,7 @@ const CustomSelectList = ({
   data,
   setSelected,
   placeholder,
-  value
+  rules = {}
 }) => {
   return (
     <>
@@ -16,8 +16,8 @@ const CustomSelectList = ({
         <Controller
           control={control}
           name={name}
-          value={value}
-          render={({ field: { value, onChange, onBlur, name, ref } }) => (
+          rules={rules}
+          render={({ field: { value, onChange } }) => (
             <SelectList
               onSelect={onChange}
               setSelected={(val) => setSelected(val)}
@@ -28,7 +28,7 @@ const CustomSelectList = ({
               dropdownStyles={{ backgroundColor: 'lightgray' }}
               dropdownItemStyles={{ marginHorizontal: 10 }}
               dropdownTextStyles={{ color: 'black' }}
-              placeholder={placeholder}
+              placeholder={!value ? placeholder : value}
             />
           )}
         />

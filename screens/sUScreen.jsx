@@ -4,15 +4,15 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 /*
   En esta parte deberán estar las pestañas (ventanas) que permitan a los "SuperUser" poder:
-  => EMPRESAS {SUCompanies}
-    => Agregar nuevas empresas a CtrlA
-    => Instalar (Agregar) el paquete comprado por una empresa x
-      => Definir cantidad de usuarios según contrato
-      => Definir si tendrá o no usuarios del tipo "companyAppAdmin" y cuantos serán
-      => Definir cuales serán los tipos de gráficos que podrá disponer según contrato
-    => Editar datos generales de una empresa
-    => Editar características del contrato de una empresa
-    => Activar o desactivar una empresa a la lista de clientes de CtrlA
+  => EMPRESAS {SUCompanies} ☑️
+    => Agregar nuevas empresas a CtrlA ☑️
+    => Instalar (Agregar) el paquete comprado por una empresa x ☑️
+      => Definir cantidad de usuarios según contrato ☑️
+      => Definir si tendrá o no usuarios del tipo "companyAppAdmin" y cuantos serán ☑️
+      => Definir cuales serán los tipos de gráficos que podrá disponer según contrato ☑️
+    => Editar datos generales de una empresa ☑️
+    => Editar características del contrato de una empresa ☑️
+    => Activar o desactivar una empresa a la lista de clientes de CtrlA 👎
   => USUARIOS {SUUsers}
     => Agregar nuevos usuarios, estos podrán ser para cualquiera de las empresas que contrataron CtrlA. Esto dependerá si está contratado este servicio o no
     => Si el contrato lo permite, agregar quienes serán los usuarios del tipo "companyAppAdmin"
@@ -37,6 +37,9 @@ import SUJobRole from './sUJobRole.jsx'
 import SUNotifications from './sUNotifications.jsx'
 import SUStandardTicket from './sUStandardTicket.jsx'
 
+import { DataContext } from '../context/DataContext.js'
+import { useContext } from 'react'
+
 const Tab = createMaterialTopTabNavigator()
 
 /*
@@ -47,7 +50,6 @@ const Tab = createMaterialTopTabNavigator()
   ! Alternativa #3: Convertir el useState + useEffect de appThemes en componentes script, para poder invocarlos por separado en appThemes y chartScreen para obtener
   los valores de preferencia de pantalla del usuario (reciclar codigo a traves de componentes).
 */
-
 // const defaultTheme = {
 //   ...DefaultTheme,
 //   colors: {
@@ -67,6 +69,8 @@ const darkTheme = {
 }
 
 function SuperUserScreen () {
+  const { data } = useContext(DataContext)
+  console.info('data desde la SuperUserScreen= \n', data)
   return (
     <NavigationContainer
       independent

@@ -1,0 +1,12 @@
+Cosas que van quedando pendientes al 3/6/23
+
+=> sUScreen
+  => SuCompanies
+    => Ver cual es el motivo por el cual no carga los datos de la empresa seleccionada al primer intento y si lo hace al segundo
+    => MEJORAS VISUALES
+  => sUUsers
+    => Agregar nuevos usuarios.
+      => Ver que calcule bien la edad!
+      => Probarla
+      => Mejoras gráficas
+    => Editar un usuario existente

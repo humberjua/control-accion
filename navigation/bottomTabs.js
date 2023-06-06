@@ -1,5 +1,3 @@
-import React from 'react'
-// import React, { useContext } from 'react'
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -9,9 +7,8 @@ import SearchScreen from '../screens/searchScreen'
 import SettingsScreen from '../screens/settingsScreen'
 import SuperUserScreen from '../screens/sUScreen.jsx'
 import CompnayAppAdminScreen from '../screens/cAAScreen.jsx'
-// import { DataContext } from '../context/DataContext'
 import { useMe } from '../hooks/userQH'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '@react-native-community/async-storage'
 
 const Tab = createMaterialBottomTabNavigator()
 
@@ -28,8 +25,8 @@ function MyTabs ({ navigation }) {
     (luego, desde el BE se enviarán notificaciones a los dispositivos de los distintos usuarios, esto también se podrá hacer desde los usuarios "CompanyAppAdmin" y "SuperUser")
     😃==> useMe, para llenar la info del perfil del usuario
     😃==> según esta info de perfil, se habilitará o no para la carga los formularios propios de ("CompanyAppAdmin", o de "SuperUser")
-    👷‍♂️👷‍♂️==> Armar las pantallas correspondientes a las pantallas propias del "CompanyAppAdmin"
-    👷‍♂️👷‍♂️==> Armar las pantallas correspondientes a las pantallas propias del "SuperUser"
+    👷‍♂️👷‍♂️☑️☑️==> Armar las pantallas correspondientes a las pantallas propias del "SuperUser"
+    👷‍♂️👷‍♂️👷‍♂️👷‍♂️==> Armar las pantallas correspondientes a las pantallas propias del "CompanyAppAdmin"
     👷‍♂️==> useAllChartsFromCompany, para armar la lista completa de charts que le figurarán como disponibles al usuario de la empresa logueada.
     👷‍♂️==> loged users from my ambit (myContacts), sirve para la pantalla "Chat". Trabajo para BE
     👷‍♂️👷‍♂️==> myChatDataLoged... o algo así, que traiga la información de historial del chat del usuario y ponga con un numero en rojo sobre el icono la cantidad de chats no leidos
@@ -38,13 +35,13 @@ function MyTabs ({ navigation }) {
     */
   AsyncStorage.flushGetRequests()
   const { me } = useMe()
-  // const { data, setData } = useContext(DataContext)
   const insets = useSafeAreaInsets()
   if (me) {
     isCAA = me.isCompanyAppAdmin
     isSU = me.isSuperUser
+    AsyncStorage.setItem('idCompany', me.idCompany)
+    AsyncStorage.setItem('companyName', me.companyName)
   }
-  // console.info('me= \n', me)
   return (
     <SafeAreaView
       style={{

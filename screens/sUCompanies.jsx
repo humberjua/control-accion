@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Text, View } from 'react-native'
 import { useTheme } from 'react-native-paper'
 import { SelectList } from 'react-native-dropdown-select-list'
@@ -8,15 +8,16 @@ import { AddNewCompanyScreen, EditCompanyDataScreen } from '../apmutations/compa
 import { ScrollView } from 'react-native-gesture-handler'
 
 /*
-  => PANTALLA EMPRESAS {SUCompanies}
-    => Agregar nuevas empresas a CtrlA
-    => Instalar (Agregar) el paquete comprado por una empresa x
-      => Definir cantidad de usuarios según contrato
-      => Definir si tendrá o no usuarios del tipo "companyAppAdmin" y cuantos serán
-      => Definir cuales serán los tipos de gráficos que podrá disponer según contrato
-    => Editar datos generales de una empresa
-    => Editar características del contrato de una empresa
-    => Activar o desactivar una empresa a la lista de clientes de CtrlA
+  => PANTALLA EMPRESAS de super usuario {SUCompanies}
+    => Agregar nuevas empresas a CtrlA ☑️
+    => Instalar (Agregar) el paquete comprado por una empresa x ☑️
+      => Definir cantidad de usuarios según contrato ☑️
+      => Definir si tendrá o no usuarios del tipo "companyAppAdmin" y cuantos serán ☑️
+      => Definir cuales serán los tipos de gráficos que podrá disponer según contrato ☑️
+    => Editar datos generales de una empresa ☑️
+    => Editar características del contrato de una empresa ☑️
+    => Activar o desactivar una empresa a la lista de clientes de CtrlA 👎
+    => En general, falta solucionar el problema del login... aunque parece que ya lo logré 🤔
 */
 
 const SUCompanies = () => {
@@ -29,20 +30,16 @@ const SUCompanies = () => {
     preCompanies = allCompaniesData.map(el => {
       return (
         {
-          key: el.idCompany,
+          key: el.companyName,
           value: el.companyName
         }
       )
     })
   }
+  useEffect(() => setSelected(selected), [])
   return (
     <ScrollView>
       <View theme={theme} name='SUCompanies'>
-        {/* En esta parte hay que Agregar una empresa a nueva (cliente) a CtrlA por lo tanto hay que:
-          1)_ Ejecutar la consulta useAllCompanies
-          2)_ Llenar el drop-drown, o una lista de elementos de un arreglo que se mostrarán por un componente de búsqueda
-          3)_ Una vez seleccionado, mostrar todo lo siguiente
-        */}
         <Text style={{ fontSize: 15, fontWeight: '700' }}>Clients Companies Administration's Screen</Text>
         <DuoToggleSwitch
           primaryText='Add New Client 💪'
@@ -70,9 +67,12 @@ const SUCompanies = () => {
                   dropdownTextStyles={{ color: 'black' }}
                   placeholder='Select Company'
                 />
+                {
+                  console.info(selected)
+                }
                 {selected && (
                   <>
-                    <Text>{`${selected}. Stored data:`}</Text>
+                    <Text style={{ color: 'rgb(220,120,120)' }}>{`${selected}. Stored data:`}</Text>
                     <EditCompanyDataScreen companySelected={selected} />
                   </>
                 )}

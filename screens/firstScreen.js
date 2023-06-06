@@ -9,21 +9,21 @@ import { Stack } from '../navigation/navigation.js'
 import LoginScreen from '../ValidationSchemas/Login.jsx'
 import { DataContext } from '../context/DataContext.js'
 import appThemes from '../utils/appThemes.js'
-// import { Logo } from '../components/Logo.js'
+import Constants from 'expo-constants'
 
 export const FirstScreen = () => {
   const { data, setData } = useContext(DataContext)
   useEffect(() => { setData(data) }, [])
   const combinedTheme = appThemes()
+
   return (
     <>
       <PaperProvider theme={combinedTheme}>
-        <SafeAreaProvider style={{ flex: 1 }}>
+        <SafeAreaProvider style={{ flex: 1, marginTop: Constants.statusBarHeight + 3 }}>
           <NavigationContainer theme={combinedTheme}>
             <Stack.Navigator
               screenOptions={{
                 headerShown: false,
-                // headerBackImage: { Logo },
                 animationEnabled: true,
                 detachPreviousScreen: true
               }}
@@ -33,7 +33,6 @@ export const FirstScreen = () => {
                   ? <Stack.Screen name='Login' component={LoginScreen} navigationKey='Login' />
                   : <Stack.Screen name='BottomTabs' component={BottomTab} navigationKey='BottomTabs' />
               }
-
             </Stack.Navigator>
           </NavigationContainer>
           {

@@ -165,7 +165,7 @@ export const AddNewChartScreen = () => {
           resizeMode='contain'
         /> */}
         <ErrorText errors={errors} />
-        <Button title='Add Chart' onPress={handleSubmit(onAddNewChartPressed)} />
+        <Button title='Add Chart*********' onPress={handleSubmit(onAddNewChartPressed)} />
         <CustomInput name='chartDescription' placeholder='Chart description' control={control} rules={CIRules('Chart Description', 3)} />
         <CustomInput name='chartWidth' placeholder='Chart width' control={control} rules={CIRulesNumber('Chart width')} keyboardType={numericKeyboard} />
         <CustomInput name='chartHeight' placeholder='Chart height' control={control} rules={CIRulesNumber('Chart height')} keyboardType={numericKeyboard} />

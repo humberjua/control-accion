@@ -1,8 +1,10 @@
 import { ApolloConsumer } from '@apollo/client'
 import { useContext } from 'react'
 import { Text, View, Button } from 'react-native'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+// import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '@react-native-community/async-storage'
 import { DataContext } from '../context/DataContext'
+// import { useMe } from '../hooks/userQH'
 
 const userDefault = {
   nickName: '',
@@ -10,15 +12,16 @@ const userDefault = {
   idDevice: '',
   userToken: '',
   idUser: '',
-  loged: false
+  loged: false,
+  idCompany: '',
+  companyName: ''
 }
 
 async function clearData () {
-  await AsyncStorage.clear()
-  await AsyncStorage.multiRemove(['token'])
-  await AsyncStorage.setItem('token', '')
   ApolloConsumer(client => client.resetStore())
-  AsyncStorage.flushGetRequests()
+  await AsyncStorage.setItem('token', '')
+  await AsyncStorage.multiRemove(['token'])
+  await AsyncStorage.clear()
 }
 
 export default function SettingsScreen (navigation) {
@@ -30,8 +33,8 @@ export default function SettingsScreen (navigation) {
         <Button
           title='Logout'
           onPress={async () => {
-            setData({ ...userDefault, loged: false, userToken: '' })
             await clearData()
+            await setData({ ...userDefault, loged: false, userToken: '', idCompany: '', companyName: '' })
           }}
         />
       </View>

@@ -7,7 +7,7 @@ import {
   Text,
   Alert
 } from 'react-native'
-import { useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import CustomInput from '../components/CustomInput.js'
 import CustomCheckBox from '../components/CustomCheckBox.js'
@@ -15,6 +15,9 @@ import { CIRules, CIRulesNumber } from '../components/CIRules.js'
 import { ErrorText } from '../components/ErrorText.js'
 import CustomSelectList from '../components/CustomSelectList.js'
 import CustomActivityIndicator from '../components/CustomActivityIndicator.js'
+import { useFindCompany } from '../hooks/companyDataQH.js'
+import { useFindContract } from '../hooks/companyContractQH.js'
+import { DataContext } from '../context/DataContext.js'
 
 const numericKeyboard = Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'number-pad'
 
@@ -59,29 +62,7 @@ mutation AddNewCompanyContract($companyName: String!, $hasCaAdmin: Boolean!, $am
 
 `
 
-const findCompanyQ = gql`
-query FindCompany($companyName: String!) {
-  findCompany(companyName: $companyName) {
-    idCompany
-    companyName
-    companyCategory
-    headQuartersCountry
-    headQuartersCity
-    headQuartersStreet
-    headQuartersNumber
-    headQuartersZipCode
-    address
-    headQuartersMainContactPhone
-    headQuartersMainContactEmail
-    companyInternalDescription
-    companyLogo
-  }
-}
-
-`
-
-
-const cathegories = [
+const categories = [
   { key: 1, value: 'Minning' }, { key: 2, value: 'Oil & Gas' }, { key: 3, value: 'Manufacture' }, { key: 4, value: 'Energy' }, { key: 5, value: 'Agriculture' }, { key: 6, value: 'Construction' }, { key: 7, value: 'Government' }, { key: 8, value: 'Other' }
 ]
 
@@ -109,8 +90,10 @@ const preValues = {
 }
 
 export const AddNewCompanyScreen = () => {
+  const { data } = useContext(DataContext)
+  // console.info('dataFromContext= \n', data)
   const [countrySelected, setCountrySelected] = useState('Argentina')
-  const [cathegorySelected, setCathegorySelected] = useState('Minning')
+  const [categorySelected, setCategorySelected] = useState('Minning')
   const { control, handleSubmit, watch, formState: { errors } } = useForm(
     {
       defaultValues: preValues
@@ -138,6 +121,9 @@ export const AddNewCompanyScreen = () => {
             headQuartersMainContactEmail: useFormData.headQuartersMainContactEmail,
             companyInternalDescription: useFormData.companyInternalDescription,
             companyLogo: useFormData.companyLogo
+          },
+          Authorization: {
+            Authorization: data.userToken
           }
         }
       )
@@ -152,6 +138,9 @@ export const AddNewCompanyScreen = () => {
               amountOfCAA: useFormData.amountOfCAA,
               amountOfUsers: useFormData.amountOfUsers,
               amountOfChartsAllowed: useFormData.amountOfChartsAllowed
+            },
+            Authorization: {
+              Authorization: data.userToken
             }
           }
         )
@@ -170,20 +159,20 @@ export const AddNewCompanyScreen = () => {
       console.error(error.message)
     }
   }
-
+  useEffect(() => setCategorySelected(categorySelected), [])
+  useEffect(() => setCountrySelected(countrySelected), [])
   return (
     <View style={styles.root}>
       <Text>Add New Company Form</Text>
-      <ErrorText errors={errors} />
-      <CustomInput name='companyName' placeholder='Company Name' control={control} rules={CIRules('companyName', 3)} />
-      <CustomSelectList name='companyCategory' control={control} data={cathegories} setSelected={setCathegorySelected} placeholder='Select Company Cathegory' value={cathegorySelected} />
-      <CustomSelectList name='headQuartersCountry' control={control} data={countries} setSelected={setCountrySelected} placeholder='Select Country' value={countrySelected} />
+      <CustomInput name='companyName' extraTitle='Company Name' control={control} rules={CIRules('companyName', 3, true)} />
+      <CustomSelectList name='companyCategory' control={control} data={categories} setSelected={setCategorySelected} rules={CIRules('companyCategory', 3, true)} />
+      <CustomSelectList name='headQuartersCountry' control={control} data={countries} setSelected={setCountrySelected} placeholder='Select Country' rules={CIRules('headQuartersCountry', 3, true)} />
       <CustomInput name='headQuartersCity' placeholder='Headquarters City' control={control} rules={CIRules('Headquarters City', 3)} />
       <CustomInput name='headQuartersStreet' placeholder='Headquarters Street' control={control} rules={CIRules('headQuartersStreet', 3)} />
       <CustomInput name='headQuartersNumber' placeholder='Street number' control={control} rules={CIRules('headQuartersNumber', 3)} />
       <CustomInput name='headQuartersZipCode' placeholder='Zip Code' control={control} rules={CIRules('headQuartersZipCode', 3)} />
       <CustomInput name='headQuartersMainContactPhone' placeholder='Main Contact Phone' control={control} rules={CIRules('headQuartersMainContactPhone', 3)} />
-      <CustomInput name='headQuartersMainContactEmail' placeholder='Main Contact Email' control={control} rules={CIRules('headQuartersMainContactEmail', 3)} />
+      <CustomInput name='headQuartersMainContactEmail' placeholder='Main Contact Email' control={control} rules={CIRules('headQuartersMainContactEmail', 3)} isEmail />
       <CustomInput name='companyInternalDescription' placeholder='Company internal description (CtrlA Description)' control={control} rules={CIRules('companyInternalDescription', 3)} />
       <CustomInput name='companyLogo' placeholder='Uri Company Logo' control={control} rules={CIRules('companyLogo', 3)} />
       <Text style={{ color: 'rgb(220,120,120)' }}>Contract information</Text>
@@ -195,10 +184,9 @@ export const AddNewCompanyScreen = () => {
       }
       <CustomInput name='amountOfUsers' placeholder='Total number of users granted' control={control} rules={CIRulesNumber('Chart width')} keyboardType={numericKeyboard} />
       <CustomInput name='amountOfChartsAllowed' placeholder='Number of Chart Types Granted' control={control} rules={CIRulesNumber('Chart width')} keyboardType={numericKeyboard} />
-      <Text> </Text>
+      <ErrorText errors={errors} />
       <Button title='Add New Company' style={styles.button} onPress={handleSubmit(onAddNewCompanyPressed)} />
       <CustomActivityIndicator visible={saveChanges} />
-      <Text> </Text>
     </View>
   )
 }
@@ -229,8 +217,153 @@ mutation EditCompanyData($idCompany: ID!, $companyName: String, $companyCategory
 
 `
 
+const editCompanyContractM = gql`
+mutation EditCompanyContract($idCompany: ID!, $idContract: ID, $companyName: String, $hasCaAdmin: Boolean, $amountOfCaa: Int, $amountOfUsers: Int, $amountOfChartsAllowed: Int) {
+  editCompanyContract(idCompany: $idCompany, idContract: $idContract, companyName: $companyName, hasCAAdmin: $hasCaAdmin, amountOfCAA: $amountOfCaa, amountOfUsers: $amountOfUsers, amountOfChartsAllowed: $amountOfChartsAllowed) {
+    idContract
+    idCompany
+    companyName
+    hasCAAdmin
+    amountOfCAA
+    amountOfUsers
+    amountOfChartsAllowed
+  }
+}
+
+`
+
 export const EditCompanyDataScreen = ({ companySelected }) => {
-  console.info('companySelected= \n', companySelected)
+  const { data } = useContext(DataContext)
+  // console.info('dataFromContext= \n', data)
+
+  const [load, setLoad] = useState(true)
+  const dataEditedCompany = useFindCompany(companySelected)
+  const dataEditedContract = useFindContract(companySelected)
+  if (!dataEditedContract || !dataEditedCompany) return <></>
+  const [countrySelected, setCountrySelected] = useState('')
+  const [categorySelected, setCategorySelected] = useState('')
+  // console.info('dataEditedContract=\n', dataEditedContract)
+  const { control, handleSubmit, watch, formState: { errors } } = useForm(
+    {
+      defaultValues: {
+        idCompany: dataEditedCompany.idCompany,
+        companyName: dataEditedCompany.companyName,
+        headQuartersCountry: dataEditedCompany.headQuartersCountry,
+        companyCategory: dataEditedCompany.companyCategory,
+        headQuartersCity: dataEditedCompany.headQuartersCity,
+        headQuartersStreet: dataEditedCompany.headQuartersStreet,
+        headQuartersNumber: dataEditedCompany.headQuartersNumber,
+        headQuartersZipCode: dataEditedCompany.headQuartersZipCode,
+        headQuartersMainContactPhone: dataEditedCompany.headQuartersMainContactPhone,
+        headQuartersMainContactEmail: dataEditedCompany.headQuartersMainContactEmail,
+        companyInternalDescription: dataEditedCompany.companyInternalDescription,
+        address: dataEditedCompany.address,
+        companyLogo: dataEditedCompany.companyLogo,
+        idContract: dataEditedContract.idContract,
+        hasCAAdmin: dataEditedContract.hasCAAdmin,
+        amountOfCAA: dataEditedContract.amountOfCAA,
+        amountOfUsers: dataEditedContract.amountOfUsers,
+        amountOfChartsAllowed: dataEditedContract.amountOfChartsAllowed
+      }
+    })
+  const hasCAAdmin = watch('hasCAAdmin')
+  const address = watch('address')
+  // const headers = {
+  //   Authorization: `bearer ${data.userToken}`
+  // }
+  // console.info('headers=\n', headers)
+  const [editCompanyData, dataEditCompanyData] = useMutation(editCompanyDataM)
+  const [editCompanyContract, dataEditCompanyContract] = useMutation(editCompanyContractM)
+  useEffect(() => setLoad(false), [])
+
+  const onEditCompanyPressed = async (useFormData) => {
+    setLoad(true)
+    console.clear()
+    console.info('useFormData= \n', useFormData)
+    console.info('dataContext= \n', data)
+    try {
+      await editCompanyData(
+        {
+          variables:
+          {
+            idCompany: useFormData.idCompany,
+            companyName: useFormData.companyName,
+            companyCategory: useFormData.companyCategory,
+            headQuartersCountry: useFormData.headQuartersCountry,
+            headQuartersCity: useFormData.headQuartersCity,
+            headQuartersStreet: useFormData.headQuartersStreet,
+            headQuartersNumber: useFormData.headQuartersNumber,
+            headQuartersZipCode: useFormData.headQuartersZipCode,
+            address: useFormData.address,
+            headQuartersMainContactPhone: useFormData.headQuartersMainContactPhone,
+            headQuartersMainContactEmail: useFormData.headQuartersMainContactEmail,
+            companyInternalDescription: useFormData.companyInternalDescription,
+            companyLogo: useFormData.companyLogo
+          }
+        }
+      )
+      console.info('primera mutation superada')
+    } catch (error) {
+      setLoad(false)
+      console.error(error.message)
+    }
+    try {
+      // const dEC = dataEditCompanyData
+      await editCompanyContract(
+        {
+          variables:
+          {
+            idContract: useFormData.idContract,
+            idCompany: useFormData.idCompany,
+            companyName: useFormData.companyName,
+            hasCAAdmin: useFormData.hasCAAdmin,
+            amountOfCAA: useFormData.amountOfCAA,
+            amountOfUsers: useFormData.amountOfUsers,
+            amountOfChartsAllowed: useFormData.amountOfChartsAllowed
+          }
+        }
+      )
+      console.info('segunda mutation superada')
+      setLoad(false)
+    } catch (error) {
+      setLoad(false)
+      console.error(error.message)
+    }
+  }
+
+  return (
+    <>
+      <View style={styles.root}>
+        <CustomInput name='companyName' placeholder='Company Name' control={control} rules={CIRules('companyName', 3, true)} />
+        <CustomSelectList name='companyCategory' control={control} data={categories} setSelected={setCategorySelected} placeholder='Select Company Cathegory' />
+        <CustomSelectList name='headQuartersCountry' control={control} data={countries} setSelected={setCountrySelected} placeholder='Select Country' />
+        <CustomInput name='headQuartersCity' placeholder='Headquarters City' control={control} rules={CIRules('headQuartersCity', 3)} />
+        <CustomInput name='headQuartersStreet' placeholder='Headquarters Street' control={control} rules={CIRules('headQuartersStreet', 3)} />
+        <CustomInput name='headQuartersNumber' placeholder='Street number' control={control} rules={CIRules('headQuartersNumber', 3)} />
+        <CustomInput name='headQuartersZipCode' placeholder='Zip Code' control={control} rules={CIRules('headQuartersZipCode', 3)} />
+        <CustomInput name='address' placeholder='address' extraTitle='address' control={control} rules={CIRules('address', 3)} readOnly value={address} />
+
+        <CustomInput name='headQuartersMainContactPhone' placeholder='Main Contact Phone' control={control} rules={CIRules('headQuartersMainContactPhone', 3)} />
+        <CustomInput name='headQuartersMainContactEmail' placeholder='Main Contact Email' control={control} rules={CIRules('headQuartersMainContactEmail', 3)} isEmail />
+        <CustomInput name='companyInternalDescription' placeholder='Company internal description (CtrlA Description)' control={control} rules={CIRules('companyInternalDescription', 3)} />
+        <CustomInput name='companyLogo' placeholder='Uri Company Logo' control={control} rules={CIRules('companyLogo', 3)} />
+
+        <Text style={{ color: 'rgb(220,120,120)' }}>Contract information</Text>
+        <CustomInput name='idContract' placeholder='idContract' extraTitle='idContract' control={control} rules={CIRules('idContract', 3)} readOnly />
+        <CustomInput name='amountOfUsers' placeholder='Users granted' extraTitle='Users granted' control={control} rules={CIRulesNumber('amountOfUsers', true, 50)} keyboardType={numericKeyboard} />
+        <CustomInput name='amountOfChartsAllowed' placeholder='Chart Types Granted' control={control} rules={CIRulesNumber('amountOfChartsAllowed', true, 2, 4)} keyboardType={numericKeyboard} />
+        <CustomCheckBox name='hasCAAdmin' control={control} title='Has company App Admins?' />
+        {
+          hasCAAdmin && (
+            <CustomInput name='amountOfCAA' placeholder='Amount of Company App Admins' control={control} rules={CIRulesNumber('amountOfCAA', true, 0, 10)} keyboardType={numericKeyboard} />
+          )
+        }
+        <ErrorText errors={errors} />
+        <Button title='Edit Selected Company Data' style={styles.button} onPress={handleSubmit(onEditCompanyPressed)} />
+        <CustomActivityIndicator visible={load} />
+      </View>
+    </>
+  )
 }
 
 const styles = StyleSheet.create({

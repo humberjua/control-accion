@@ -1,5 +1,6 @@
 import { setContext } from '@apollo/client/link/context'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '@react-native-community/async-storage'
+// import AsyncStorage from '@react-native-async-storage/async-storage'
 import {
   ApolloClient,
   InMemoryCache,
@@ -7,15 +8,14 @@ import {
 } from '@apollo/client'
 
 const httpLink = createHttpLink({
-  uri: 'http://192.168.100.154:4000'
+  uri: 'http://192.168.1.35:4000'
 })
 
 // HJ ===> funciona, pero solo reiniciando la aplicación
 let tokenValue
 const getValue = async () => {
-  AsyncStorage.flushGetRequests()
   await AsyncStorage.getItem('token').then(async value => {
-    tokenValue = `BEARER ${value}`
+    await AsyncStorage.flushGetRequests(tokenValue = `BEARER ${value}`)
     console.log('tokenValue on ApolloClient side (then)= \n', tokenValue)
   }
   ).catch(
@@ -25,12 +25,32 @@ const getValue = async () => {
     }
   )
   if (tokenValue === 'BEARER ' + null) {
-    tokenValue = await AsyncStorage.getItem('token')
-    AsyncStorage.flushGetRequests()
+    AsyncStorage.flushGetRequests(tokenValue = await AsyncStorage.getItem('token'))
     console.log('tokenValue on ApolloClient side (tokenValue===null)= \n', tokenValue)
   }
+  await AsyncStorage.flushGetRequests(tokenValue)
   return await tokenValue
 }
+const authLink = setContext(async (_, { headers }) => {
+  return {
+    credentials: 'include',
+    headers: {
+      ...headers,
+      Authorization: await getValue()
+    }
+  }
+})
+
+const createApolloClient = () => {
+  const client = new ApolloClient({
+    link: authLink.concat(httpLink),
+    cache: new InMemoryCache()
+  })
+  return client
+}
+
+export default createApolloClient
+
 // https://media.licdn.com/dms/image/D4D03AQHQIMFq29YR_w/profile-displayphoto-shrink_200_200/0/1674560532914?e=1689811200&v=beta&t=em199B96wPlX0rhAIPNJ9mrn5YU0UcwfSLB9ielQRYY
 // FRANCÓ (por ahora no funciona)
 // let tokenValue
@@ -52,25 +72,23 @@ const getValue = async () => {
 //   return tokenValue
 // }
 
-const authLink = setContext(async (_, { headers }) => {
-  return {
-    headers: {
-      ...headers,
-      Authorization: await getValue()
-    }
-  }
-})
-
-const createApolloClient = () => {
-  const client = new ApolloClient({
-    link: authLink.concat(httpLink),
-    cache: new InMemoryCache()
-  })
-  return client
-}
-// const createApolloClient = () => new ApolloClient({
-//   link: authLink.concat(httpLink),
-//   cache: new InMemoryCache()
-// })
-
-export default createApolloClient
+// // HJ ===> funciona, pero solo reiniciando la aplicación
+// let tokenValue
+// const getValue = async () => {
+//   await AsyncStorage.getItem('token').then(value => {
+//     AsyncStorage.flushGetRequests(tokenValue = `BEARER ${value}`)
+//     console.log('tokenValue on ApolloClient side (then)= \n', tokenValue)
+//   }
+//   ).catch(
+//     value => {
+//       tokenValue = `BEARER ${value}`
+//       console.log('tokenValue on ApolloClient side (catch)= \n', tokenValue)
+//     }
+//   )
+//   if (tokenValue === 'BEARER ' + null) {
+//     AsyncStorage.flushGetRequests(tokenValue = await AsyncStorage.getItem('token'))
+//     console.log('tokenValue on ApolloClient side (tokenValue===null)= \n', tokenValue)
+//   }
+//   await AsyncStorage.flushGetRequests(tokenValue)
+//   return await tokenValue
+// }

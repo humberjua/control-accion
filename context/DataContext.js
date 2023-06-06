@@ -12,7 +12,9 @@ const userDefault = {
   idDevice: '',
   userToken: '',
   idUser: '',
-  loged: false
+  loged: false,
+  idCompany: '',
+  companyName: ''
 }
 
 export const DataProvider = ({ children }) => {

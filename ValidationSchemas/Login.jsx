@@ -13,7 +13,8 @@ import { loginValidationSchema } from './Login.js'
 import { DataContext } from '../context/DataContext.js'
 import { gql, useMutation } from '@apollo/client'
 import { GetToken } from '../utils/GetToken.js'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '@react-native-community/async-storage'
+// import AsyncStorage from '@react-native-async-storage/async-storage'
 import CustomActivityIndicator from '../components/CustomActivityIndicator.js'
 
 const gqlLoginM = gql`
@@ -28,7 +29,7 @@ mutation Login($userName: String!, $password: String!, $userPlatform: String!, $
 let newData
 let tokenUserDevice
 let userToken
-const notAllowedCharacters = ['*', '%', '(', ')', '>', '/', '<', '=', '"', '\\', '<', '`', '\'']
+const notAllowedCharacters = ['*', '%', '(', ')', '>', '/', '<', '=', '"', '\\', '>', '`', '\'']
 
 const FormikInputValue = ({ name, ...props }) => {
   const [field, meta, helpers] = useField(name)
@@ -59,8 +60,8 @@ const FormikInputValue = ({ name, ...props }) => {
 }
 
 export default function LogInScreen ({ navigation }) {
-  AsyncStorage.clear()
-  AsyncStorage.flushGetRequests()
+  // AsyncStorage.clear()
+  // AsyncStorage.flushGetRequests()
   const { data, setData } = useContext(DataContext)
   const [login, dataLogedUser] = useMutation(gqlLoginM)
   const [waiting, setWaiting] = useState(false)
@@ -78,10 +79,8 @@ export default function LogInScreen ({ navigation }) {
         initialValues={data}
         onSubmit={
             async (values) => {
-              await AsyncStorage.clear()
-              await AsyncStorage.multiRemove(['token'], () => null)
-              AsyncStorage.flushGetRequests()
               setWaiting(true)
+              await AsyncStorage.clear()
               try {
                 await login({
                   variables:
@@ -91,10 +90,11 @@ export default function LogInScreen ({ navigation }) {
                     userPlatform: Platform.OS,
                     idDevice: values.idDevice,
                     tokenDevice: values.idDevice,
-                    loged: true
+                    loged: true,
+                    idCompany: '',
+                    companyName: ''
                   }
                 })
-                await AsyncStorage.clear()
                 console.log('userToken onSubmit= \n', userToken)
                 values.idDevice = tokenUserDevice
                 values.loged = true
@@ -102,7 +102,6 @@ export default function LogInScreen ({ navigation }) {
                 setData({ ...values, loged: true, userToken })
                 await AsyncStorage.setItem('token', userToken)
                 setWaiting(false)
-                AsyncStorage.flushGetRequests()
               } catch (error) {
                 console.error(error)
                 setWaiting(false)
