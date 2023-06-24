@@ -91,7 +91,6 @@ const preValues = {
 
 export const AddNewCompanyScreen = () => {
   const { data } = useContext(DataContext)
-  // console.info('dataFromContext= \n', data)
   const [countrySelected, setCountrySelected] = useState('Argentina')
   const [categorySelected, setCategorySelected] = useState('Minning')
   const { control, handleSubmit, watch, formState: { errors } } = useForm(
@@ -234,7 +233,6 @@ mutation EditCompanyContract($idCompany: ID!, $idContract: ID, $companyName: Str
 
 export const EditCompanyDataScreen = ({ companySelected }) => {
   const { data } = useContext(DataContext)
-  // console.info('dataFromContext= \n', data)
 
   const [load, setLoad] = useState(true)
   const dataEditedCompany = useFindCompany(companySelected)
@@ -268,19 +266,12 @@ export const EditCompanyDataScreen = ({ companySelected }) => {
     })
   const hasCAAdmin = watch('hasCAAdmin')
   const address = watch('address')
-  // const headers = {
-  //   Authorization: `bearer ${data.userToken}`
-  // }
-  // console.info('headers=\n', headers)
   const [editCompanyData, dataEditCompanyData] = useMutation(editCompanyDataM)
   const [editCompanyContract, dataEditCompanyContract] = useMutation(editCompanyContractM)
   useEffect(() => setLoad(false), [])
 
   const onEditCompanyPressed = async (useFormData) => {
     setLoad(true)
-    console.clear()
-    console.info('useFormData= \n', useFormData)
-    console.info('dataContext= \n', data)
     try {
       await editCompanyData(
         {
@@ -302,13 +293,11 @@ export const EditCompanyDataScreen = ({ companySelected }) => {
           }
         }
       )
-      console.info('primera mutation superada')
     } catch (error) {
       setLoad(false)
       console.error(error.message)
     }
     try {
-      // const dEC = dataEditCompanyData
       await editCompanyContract(
         {
           variables:
@@ -323,7 +312,6 @@ export const EditCompanyDataScreen = ({ companySelected }) => {
           }
         }
       )
-      console.info('segunda mutation superada')
       setLoad(false)
     } catch (error) {
       setLoad(false)

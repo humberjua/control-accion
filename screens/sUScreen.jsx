@@ -13,14 +13,17 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
     => Editar datos generales de una empresa ☑️
     => Editar características del contrato de una empresa ☑️
     => Activar o desactivar una empresa a la lista de clientes de CtrlA 👎
-  => USUARIOS {SUUsers}
-    => Agregar nuevos usuarios, estos podrán ser para cualquiera de las empresas que contrataron CtrlA. Esto dependerá si está contratado este servicio o no
-    => Si el contrato lo permite, agregar quienes serán los usuarios del tipo "companyAppAdmin"
-    => Editar perfiles de usuarios a voluntad
-  => STANDARD SECTOR {SUStandardSector}
-    => Agregar o editar un sector estándar
-  =>  STANDARD JOB ROLE {SUJobRole}
-    => Agregar o editar un rol de trabajo estándar
+  => USUARIOS {SUUsers} ☑️
+    => Agregar nuevos usuarios, estos podrán ser para cualquiera de las empresas que contrataron CtrlA. Esto dependerá si está contratado este servicio o no. ☑️
+    => Si el contrato lo permite, agregar quienes serán los usuarios del tipo "companyAppAdmin". ☑️
+    => Editar perfiles de usuarios a voluntad. ☑️
+    ( en general me faltó probar que las mutaciones estén funcionando bien... aunque deberían)
+  => STANDARD SECTOR {SUStandardSector} ☑️
+    => Agregar o editar un sector estándar ☑️
+    ( en general me faltó probar que las mutaciones estén funcionando bien... aunque deberían)
+    =>  STANDARD JOB ROLE {SUJobRole} ☑️
+    => Agregar o editar un rol de trabajo estándar ☑️
+    ( en general me faltó probar que las mutaciones estén funcionando bien... aunque deberían)
   => STANDARD TICKET {SUStandardTicket}
     => Agregar o editar un ticket estándar
   => NOTIFICATIONS {SUNotifications}
@@ -135,19 +138,6 @@ function SuperUserScreen () {
         />
 
         <Tab.Screen
-          name='SUNotifications'
-          component={SUNotifications}
-          options={{
-            // tabBarLabel: 'Notifications',
-            tabBarLabel: '',
-            tabBarActiveTintColor: 'rgb(211, 147, 146)',
-            tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
-            tabBarIcon: ({ color }) => (
-              <MaterialCommunityIcons name='email-edit' color={color} size={26} />)
-          }}
-        />
-
-        <Tab.Screen
           name='SUStandardTicket'
           component={SUStandardTicket}
           options={{
@@ -157,6 +147,19 @@ function SuperUserScreen () {
             tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name='form-select' color={color} size={26} />)
+          }}
+        />
+
+        <Tab.Screen
+          name='SUNotifications'
+          component={SUNotifications}
+          options={{
+            // tabBarLabel: 'Notifications',
+            tabBarLabel: '',
+            tabBarActiveTintColor: 'rgb(211, 147, 146)',
+            tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name='email-edit' color={color} size={26} />)
           }}
         />
 

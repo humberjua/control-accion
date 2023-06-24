@@ -26,6 +26,11 @@ const ChatScreen = (companyName) => {
   return (
     <View theme={theme} name='ChatScreen'>
       <Text>This is the Chat Screen!</Text>
+      <Text> </Text>
+      <Text>{companyUsers.map(el => (
+        el.nickName + ' | ' + el.companySectorDescription + '\n'
+      ))}
+      </Text>
     </View>
   )
 }

@@ -25,7 +25,7 @@ query AllCompanyJobRoles($companyName: String!) {
 `
 
 export const useAllCompanyJobRoles = (companyName) => {
-  console.log('companyName desde el useAllCompanyJobRoles=', companyName)
+  // console.log('companyName desde el useAllCompanyJobRoles=', companyName)
   const { loading, error, data } = useQuery(allCompanyJobRolesQ, { variables: { companyName } })
   if (loading) {
     return 'Loading...'
@@ -33,7 +33,7 @@ export const useAllCompanyJobRoles = (companyName) => {
   if (error) {
     return `Error! ${error}`
   }
-  console.log(data)
+  // console.log(data)
   const allCompanyJobRolesData = data.allCompanyJobRoles.map(el => el)
 
   return allCompanyJobRolesData

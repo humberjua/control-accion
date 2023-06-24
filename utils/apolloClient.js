@@ -8,7 +8,7 @@ import {
 } from '@apollo/client'
 
 const httpLink = createHttpLink({
-  uri: 'http://192.168.1.35:4000'
+  uri: 'http://192.168.1.37:4000'
 })
 
 // HJ ===> funciona, pero solo reiniciando la aplicación
