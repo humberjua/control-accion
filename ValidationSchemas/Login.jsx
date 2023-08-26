@@ -11,7 +11,7 @@ import StyledText from '../styles/StyledText.jsx'
 import StyledTextInput from '../styles/StyledTextInput.jsx'
 import { loginValidationSchema } from './Login.js'
 import { DataContext } from '../context/DataContext.js'
-import { gql, useMutation } from '@apollo/client'
+import { gql, useMutation, ApolloConsumer } from '@apollo/client'
 import { GetToken } from '../utils/GetToken.js'
 import AsyncStorage from '@react-native-community/async-storage'
 // import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -59,6 +59,16 @@ const FormikInputValue = ({ name, ...props }) => {
   )
 }
 
+async function clearData () {
+  ApolloConsumer(client => {
+    client.resetStore()
+    client.cache.reset()
+  })
+  await AsyncStorage.setItem('token', '')
+  await AsyncStorage.multiRemove(['token'])
+  await AsyncStorage.clear()
+}
+
 export default function LogInScreen ({ navigation }) {
   // AsyncStorage.clear()
   // AsyncStorage.flushGetRequests()
@@ -81,6 +91,7 @@ export default function LogInScreen ({ navigation }) {
             async (values) => {
               setWaiting(true)
               await AsyncStorage.clear()
+              await clearData()
               try {
                 await login({
                   variables:
@@ -92,14 +103,15 @@ export default function LogInScreen ({ navigation }) {
                     tokenDevice: values.idDevice,
                     loged: true,
                     idCompany: '',
-                    companyName: ''
+                    companyName: '',
+                    userToChat: ''
                   }
                 })
                 console.log('userToken onSubmit= \n', userToken)
                 values.idDevice = tokenUserDevice
                 values.loged = true
                 newData.loged = true
-                setData({ ...values, loged: true, userToken })
+                setData({ ...values, loged: true, userToken, userToChat: '' })
                 await AsyncStorage.setItem('token', userToken)
                 setWaiting(false)
               } catch (error) {

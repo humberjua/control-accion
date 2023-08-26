@@ -1,34 +1,52 @@
-import * as React from 'react'
-import { StyleSheet } from 'react-native'
-import { FAB as Fab } from 'react-native-paper'
+import { useContext, useEffect, useState } from 'react'
 import { DataContext } from '../context/DataContext.js'
+import { View, StyleSheet } from 'react-native'
+import { FAB as Fab, Portal } from 'react-native-paper'
+import { useNavigation } from '@react-navigation/native'
 
 const MyFab = () => {
-  const { data } = React.useContext(DataContext)
+  const { data } = useContext(DataContext)
+  const [view, setView] = useState(false)
+  const [state, setState] = useState({ open: false })
+  const onStateChange = ({ open }) => setState({ open })
+  const { open } = state
+  const navigation = useNavigation()
+
+  useEffect(() => setView(data.fabView), [data])
+
   return (
-    <Fab
-      icon='plus'
-      style={styles.fab}
-      size={20}
-      onPress={() => {
-        if (data.loged) {
-          console.info('avanti = ', data.nickName)
-        } else {
-          // console.info('negativa la maniobra')
-        }
-      }}
-    />
+    <View style={styles.container}>
+      <Portal>
+        <Fab.Group
+          open={open}
+          visible={view}
+          style={styles.button}
+          backdropColor='#00000000'
+          icon={open ? 'close' : 'plus'}
+          actions={[
+            {
+              icon: 'alert-octagon',
+              label: 'Evento Inseguro',
+              onPress: () => navigation.navigate('EventoInseguro')
+            },
+            {
+              icon: 'car-brake-alert',
+              label: 'Accionar Inseguro',
+              onPress: () => console.log('Pressed Accionar Inseguro')
+            }
+          ]}
+          onStateChange={onStateChange}
+        />
+      </Portal>
+    </View>
   )
 }
+
 const styles = StyleSheet.create({
-  fab: {
-    position: 'absolute',
-    margin: 30,
-    marginBottom: 105,
-    right: 0,
-    bottom: 0,
-    borderRadius: 15,
-    alignContent: 'center'
+  container: {
+  },
+  button: {
+    marginBottom: 80
   }
 })
 

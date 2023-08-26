@@ -1,21 +1,32 @@
+import { useState, useEffect } from 'react'
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import ChartScreen from './chartScreen'
-import ChatScreen from '../screens/chatScreen'
-import SearchScreen from '../screens/searchScreen'
+import ReportTabs from './reportTabs'
 import SettingsScreen from '../screens/settingsScreen'
 import SuperUserScreen from '../screens/sUScreen.jsx'
 import CompnayAppAdminScreen from '../screens/cAAScreen.jsx'
 import { useMe } from '../hooks/userQH'
 import AsyncStorage from '@react-native-community/async-storage'
+import ChatList from '../components/chat/ChatList'
+import { useTotalUnReadChatsByIdUser } from '../hooks/chatQH'
+// import SearchScreen from '../screens/searchScreen'
+// import { gql, useLazyQuery } from '@apollo/client'
+
+// const TotalUnReadChatsByIdUserQ = gql`
+// query Query($idUser: ID!) {
+//   totalUnReadChatsByIdUser(idUser: $idUser)
+// }
+
+// `
 
 const Tab = createMaterialBottomTabNavigator()
 
 let isCAA = false
 let isSU = false
 
-function MyTabs ({ navigation }) {
+function MyTabs () {
   /*
     En esta parte hay que hacer consultas varias a la base de datos para traer información que será importante para armar lo que se muestra
     en la aplicación. Por ahora sería lo siguiente:
@@ -25,7 +36,7 @@ function MyTabs ({ navigation }) {
     (luego, desde el BE se enviarán notificaciones a los dispositivos de los distintos usuarios, esto también se podrá hacer desde los usuarios "CompanyAppAdmin" y "SuperUser")
     😃==> useMe, para llenar la info del perfil del usuario
     😃==> según esta info de perfil, se habilitará o no para la carga los formularios propios de ("CompanyAppAdmin", o de "SuperUser")
-    👷‍♂️👷‍♂️☑️☑️==> Armar las pantallas correspondientes a las pantallas propias del "SuperUser"
+    👷‍♂️☑️☑️☑️==> Armar las pantallas correspondientes a las pantallas propias del "SuperUser"
     👷‍♂️👷‍♂️👷‍♂️👷‍♂️==> Armar las pantallas correspondientes a las pantallas propias del "CompanyAppAdmin"
     👷‍♂️==> useAllChartsFromCompany, para armar la lista completa de charts que le figurarán como disponibles al usuario de la empresa logueada.
     👷‍♂️==> loged users from my ambit (myContacts), sirve para la pantalla "Chat". Trabajo para BE
@@ -35,13 +46,33 @@ function MyTabs ({ navigation }) {
     */
   AsyncStorage.flushGetRequests()
   const { me } = useMe()
+  const [unReadMsg, setUnReadMsg] = useState(0)
   const insets = useSafeAreaInsets()
+  // const [getUNRMSGS, UNRMSG] = useLazyQuery(TotalUnReadChatsByIdUserQ)
+
+  // setTimeout(() => {
+  //   console.log(UNRMSG)
+  //   if (me) {
+  //     getUNRMSGS({ variables: { idUser: me.idUser } })
+  //   }
+  //   if (UNRMSG.data) setUnReadMsg(UNRMSG.data.totalUnReadChatsByIdUser)
+  // }, 1000)
+
+  const unRMSg = useTotalUnReadChatsByIdUser(me ? me.idUser : '')
+
   if (me) {
     isCAA = me.isCompanyAppAdmin
     isSU = me.isSuperUser
     AsyncStorage.setItem('idCompany', me.idCompany)
     AsyncStorage.setItem('companyName', me.companyName)
   }
+
+  useEffect(() => {
+    if (unRMSg !== 'Loading...' && unRMSg) {
+      setUnReadMsg(unRMSg)
+    }
+  }, [unRMSg])
+
   return (
     <SafeAreaView
       style={{
@@ -53,17 +84,20 @@ function MyTabs ({ navigation }) {
 
       <Tab.Navigator
         initialRouteName='Charts'
+        screenOptions={{
+          statusBarStyle: 'dark' // importante para que se vea el statusBar
+        }}
       >
 
         <Tab.Screen
           name='Chat'
-          component={ChatScreen}
+          component={ChatList}
           options={{
             tabBarLabel: 'Chat',
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name='chat' color={color} size={26} />
             ),
-            tabBarBadge: 2
+            tabBarBadge: unReadMsg !== 0 ? unReadMsg : false
           }}
         />
 
@@ -79,10 +113,10 @@ function MyTabs ({ navigation }) {
         />
 
         <Tab.Screen
-          name='Search'
-          component={SearchScreen}
+          name='SearchScreen'
+          component={ReportTabs}
           options={{
-            tabBarLabel: 'Search',
+            tabBarLabel: 'Reports',
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons name='magnify' color={color} size={26} />
             )

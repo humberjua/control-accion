@@ -51,7 +51,7 @@ export const AddNewStandardSectorScreen = () => {
     <ScrollView>
       <View>
         <CustomInput control={control} placeholder='New Standard Sector Description' name='standardSectorDescription' rules={CIRules('standardSectorDescription', 3)} />
-        <Button title='Add New Standard Sector' onPress={onAddNewStandardSectorPressed} />
+        <Button title='Add New Standard Sector' onPress={handleSubmit(onAddNewStandardSectorPressed)} />
         <CustomActivityIndicator visible={add} />
       </View>
     </ScrollView>

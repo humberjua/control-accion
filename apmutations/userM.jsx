@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { gql, useMutation, useLazyQuery } from '@apollo/client'
-import {
-  View,
-  ScrollView,
-  Button,
-  StyleSheet,
-  Platform,
-  Text
-} from 'react-native'
+import { View, ScrollView, Button, StyleSheet, Platform, Text, Alert } from 'react-native'
 import { useForm } from 'react-hook-form'
 import CustomInput from '../components/CustomInput.js'
 import CustomCheckBox from '../components/CustomCheckBox.js'
@@ -16,20 +9,18 @@ import { CIRules } from '../components/CIRules.js'
 import { ErrorText } from '../components/ErrorText.js'
 import { useFindCompany } from '../hooks/companyDataQH.js'
 import { useFindContract } from '../hooks/companyContractQH.js'
+import { useAllCompanySectors } from '../hooks/companySectorQ.js'
 import { useAllCompanyJobRoles } from '../hooks/companyJobRoleQH.js'
 import { useAllUsersFromCompany, useTotalUsersFromCompany } from '../hooks/userQH.jsx'
 import DatePicker, { getFormatedDate } from 'react-native-modern-datepicker'
 import CustomActivityIndicator from '../components/CustomActivityIndicator.js'
 import { UserMeditScreen } from '../apmutations/userMEdit.jsx'
 import { SelectList } from 'react-native-dropdown-select-list'
+import { BusinessUnitsFrom } from '../apqueries/companyBusinessUnitQ.jsx'
+import { useAllStandardJobRoles } from '../hooks/standardJobRoleQH.js'
 const numericKeyboard = Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'number-pad'
 
 // const phoneKeyboard = 'phone-pad'
-
-/*
-  Se debe en primer lugar, averiguar si se trata de un superUser
-  o de un adminApp
-*/
 
 /*
   Mutation:addNewUser
@@ -38,8 +29,7 @@ const numericKeyboard = Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'num
 // Mutation definition from BE. All constants definitions used for useMutation hook, will have an M letter at the end
 const addNewUserM = gql`
 mutation AddNewUser($idEmployee: ID!, $password: String!, $firstName: String!, $lastName: String!, $nickName: String!, $email: String!, $idCompany: ID!, $companyName: String!, $idCompanyBusinessUnit: ID!, $companyBusinessUnitDescription: String!, $idCompanySector: ID!, $companySectorDescription: String!, $idStandardJobRole: ID!, $standardJobRoleDescription: String!, $idcompanyJobRole: ID!, $companyJobRoleDescription: String!, $userProfileImage: String!, $isCompanyAppAdmin: Boolean!, $hiredDate: String!, $isSuperUser: Boolean!, $secondName: String, $secondLastName: String, $phone: String, $active: Boolean, $age: Int!, $gender: String!, $birthday: String!) {
-  addNewUser(idEmployee: $idEmployee, password: $password, firstName: $firstName, lastName: $lastName, nickName: $nickName, email: $email, idCompany: $idCompany, companyName: $companyName, idCompanyBusinessUnit: $idCompanyBusinessUnit, companyBusinessUnitDescription: $companyBusinessUnitDescription, idCompanySector: $idCompanySector, companySectorDescription: $companySectorDescription, idStandardJobRole: $idStandardJobRole, standardJobRoleDescription: $standardJobRoleDescription, idcompanyJobRole: $idcompanyJobRole, companyJobRoleDescription: $companyJobRoleDescription, userProfileImage: $userProfileImage, isCompanyAppAdmin: $isCompanyAppAdmin, hiredDate: $hiredDate, isSuperUser: $isSuperUser, secondName: $secondName, secondLastName: $secondLastName, phone: $phone, active: $active, age: $age, gender: $gender, birthday: $birthday) {
-    idUser
+  addNewUser(idEmployee: $idEmployee, password: $password, firstName: $firstName, lastName: $lastName, nickName: $nickName, email: $email, idCompany: $idCompany, companyName: $companyName, idCompanyBusinessUnit: $idCompanyBusinessUnit, companyBusinessUnitDescription: $companyBusinessUnitDescription, idCompanySector: $idCompanySector, companySectorDescription: $companySectorDescription, idStandardJobRole: $idStandardJobRole, standardJobRoleDescription: $standardJobRoleDescription, idcompanyJobRole: $idcompanyJobRole, companyJobRoleDescription: $companyJobRoleDescription, userProfileImage: $userProfileImage, isCompanyAppAdmin: $isCompanyAppAdmin, hiredDate: $hiredDate, isSuperUser: $isSuperUser, secondName: $secondName, secondLastName: $secondLastName, phone: $phone, active: $active, age: $age, gender: $gender, birthday: $birthday) {    
     idEmployee
     password
     firstName
@@ -80,76 +70,193 @@ export const AddNewUserScreen = (superCreator) => {
   const companySelectedData = useFindCompany(companySelected)
   const allCompanyJobRolesData = useAllCompanyJobRoles(companySelected)
   const dataContract = useFindContract(companySelected)
-  const cAAUsers = useTotalUsersFromCompany(companySelected, dataContract.hasCAAdmin) // array
+  const cAAUsers = useTotalUsersFromCompany(companySelected, dataContract.hasCAAdmin)
   const totalUsers = useTotalUsersFromCompany(companySelected)
+  const allCompanySectors = useAllCompanySectors(companySelected)
+  const allBUFromCompany = BusinessUnitsFrom({ companyName: companySelected })
+  const standardJobRoleData = useAllStandardJobRoles()
+
+  /*
+    populate dropdown lists
+  */
+
+  // All Business Units From Company
+  let allBUFC = [{ key: '', value: '' }]
+
+  if (allBUFromCompany !== undefined) {
+    try {
+      allBUFC = allBUFromCompany.map(el => {
+        return (
+          {
+            key: el.idCompanyBusinessUnit,
+            value: el.companyBusinessUnitDescription
+          }
+        )
+      })
+    } catch (error) {}
+  }
+
+  // All Company Job Roles
   let allCJRD = [{ key: '', value: '' }]
-  if (allCompanyJobRolesData !== undefined) {
+
+  if (allCompanyJobRolesData !== undefined && allCompanyJobRolesData !== 'Loading...') {
     try {
       allCJRD = allCompanyJobRolesData.map(el => {
         return (
           {
-            key: el.companyJobRoleDescription,
+            key: el.idCompanyJobRole,
             value: el.companyJobRoleDescription
           }
         )
       })
-    } catch (error) {
-    }
+    } catch (error) {}
   }
 
-  const preValues = {
-    idEmployee: '',
-    password: '',
-    firstName: '',
-    secondName: '',
-    lastName: '',
-    secondLastName: '',
-    nickName: '',
-    email: `newuser@${companySelectedData}.com`,
-    phone: '',
-    idCompany: companySelectedData.idCompany,
-    companyName: companySelectedData.companyName,
-    idCompanyBusinessUnit: companySelectedData.idCompanyBusinessUnit,
-    companyBusinessUnitDescription: companySelectedData.companyBusinessUnitDescription,
-    idCompanySector: companySelectedData.idCompanySector,
-    companySectorDescription: companySelectedData.companySectorDescription,
-    idStandardJobRole: '', // este se tiene que seleccionar de la lista, una vez seleccionado el companyJobRole
-    standardJobRoleDescription: '', // este se tiene que seleccionar una vez seleccionado el companyJobRole
-    idcompanyJobRole: '', // este se tiene que seleccionar de la lista, una vez seleccionado el companyJobRoleDescription
-    companyJobRoleDescription: '', // este se selecciona de una lista con todos los companyJobRole cargados
-    userProfileImage: '', // por ahora solo será un customInput
-    isCompanyAppAdmin: false, // se llenará por un checkBox
-    hiredDate: '', // este se llenará utilizando el CustomDatePicker
-    active: false, // checkBox
-    isSuperUser: false, // checkBox. ==> Necesita una doble confirmación para activarse. Solo podrá ser para thumDot o para cntrlA
-    age: '',
-    birthday: '', // este se llenará utilizando el CustomDatePicker
-    gender: '' // customList con 3 opciones (Male,Female,Other)
+  // All Company Sectors
+  let allCS = [{ key: '', value: '' }]
+
+  if (allCompanySectors !== undefined && allCompanySectors !== 'Loading...') {
+    try {
+      allCS = allCompanySectors.map(el => {
+        return (
+          {
+            key: el.idCompanySector,
+            value: el.companySectorDescription
+          }
+        )
+      })
+    } catch (error) {}
   }
+
+  let allSJR = [{ key: '', value: '' }]
+  if (standardJobRoleData !== undefined && standardJobRoleData !== 'Loading...') {
+    try {
+      allSJR = standardJobRoleData.map(el => {
+        return (
+          {
+            key: el.idStandardJobRole,
+            value: el.standardJobRoleDescription
+          }
+        )
+      })
+    } catch {}
+  }
+
+  // Populate pre values for Add New User Screen
+  const [preValues, setPreValues] = useState(
+    {
+      idEmployee: '',
+      password: '',
+      firstName: '',
+      secondName: '',
+      lastName: '',
+      secondLastName: '',
+      nickName: '',
+      email: companySelectedData !== undefined
+        ? companySelectedData?.headQuartersMainContactEmail?.toString().slice(companySelectedData?.headQuartersMainContactEmail?.toString().indexOf('@', 0), companySelectedData?.headQuartersMainContactEmail?.toString().length)
+        : '',
+      phone: '',
+      idCompany: companySelectedData?.idCompany,
+      companyName: companySelectedData?.companyName,
+      idCompanyBusinessUnit: companySelectedData?.idCompanyBusinessUnit,
+      companyBusinessUnitDescription: companySelectedData?.companyBusinessUnitDescription,
+      idCompanySector: companySelectedData?.idCompanySector,
+      companySectorDescription: companySelectedData?.companySectorDescription,
+      idStandardJobRole: '', // este se tiene que seleccionar de la lista, una vez seleccionado el companyJobRole
+      standardJobRoleDescription: '', // este se tiene que seleccionar una vez seleccionado el companyJobRole
+      idcompanyJobRole: '', // este se tiene que seleccionar de la lista, una vez seleccionado el companyJobRoleDescription
+      companyJobRoleDescription: '', // este se selecciona de una lista con todos los companyJobRole cargados
+      userProfileImage: '', // por ahora solo será un customInput
+      isCompanyAppAdmin: false, // se llenará por un checkBox
+      hiredDate: '', // este se llenará utilizando el CustomDatePicker
+      active: false, // checkBox
+      isSuperUser: false, // checkBox. ==> Necesita una doble confirmación para activarse. Solo podrá ser para thumDot o para cntrlA
+      age: '',
+      birthday: '', // este se llenará utilizando el CustomDatePicker
+      gender: '' // customList con 3 opciones (Male,Female,Other)
+    }
+  )
+
+  // Calling useForm
   const { control, handleSubmit, watch, formState: { errors } } = useForm(
     {
       defaultValues: preValues
     })
 
-  const [birthday, setBirthday] = useState([])
-  const [hiredDate, setHiredDate] = useState([])
-  const [age, setAge] = useState(0)
+  const [birthday, setBirthday] = useState(watch('birthday'))
+  const [hiredDate, setHiredDate] = useState(watch('hiredDate'))
+  const [age, setAge] = useState(watch('age'))
   const [usersLeft, setUsersLeft] = useState(0)
-
   const [addNewUser] = useMutation(addNewUserM)
-  const [companyJobRoleSelected, setCompanyJobRoleSelected] = useState(false)
-  const [genderSelected, setGenderSelected] = useState('')
+  const [companyJobRole, setCompanyJobRole] = useState(false)
+  const [gender, setGender] = useState('')
   const [showCAAUsers, setShowCAAUsers] = useState(false)
   const [showSUsers, setShowSUsers] = useState(false)
   const [allowAddNewUser, setAllowAddNewUser] = useState(false)
+  const [companyBusinessUnit, setCompanyBusinessUnit] = useState('')
+  const [companySector, setCompanySector] = useState(watch('companySectorDescription'))
+  const [save, setSave] = useState(false)
+  const [email, setEmail] = useState(watch('email'))
+  const [stdJR, setStdJR] = useState('')
 
-  useEffect(() => setShowCAAUsers((dataContract.hasCAAdmin && dataContract.amountOfCAA > cAAUsers)), [])
-  useEffect(() => setShowSUsers(superUser && (dataContract.companyName === 'Thumdot' || dataContract.companyName === 'control-accion')), [])
-  useEffect(() => setAllowAddNewUser(totalUsers < dataContract.amountOfUsers), [])
-  useEffect(() => setAge(age), [])
-
-  const handleBirthday = (propBirthday) => setBirthday(propBirthday)
+  const handleBirthday = (propBirthday) => {
+    setBirthday(propBirthday)
+    setAge(age)
+  }
   const handleHiredDate = (propHiredDate) => setHiredDate(propHiredDate)
+
+  useEffect(() => {
+    setShowCAAUsers((dataContract.hasCAAdmin && dataContract.amountOfCAA > cAAUsers))
+    setShowSUsers(superUser && (dataContract.companyName === 'Thumdot' || dataContract.companyName === 'control-accion'))
+    setAllowAddNewUser(totalUsers < dataContract.amountOfUsers)
+    setAge(Number(age))
+    setUsersLeft(dataContract.amountOfUsers - totalUsers)
+    setPreValues({ ...preValues })
+
+    setCompanyJobRole(companyJobRole)
+    setCompanySector(companySector)
+    setGender(gender)
+    setCompanyBusinessUnit(companyBusinessUnit)
+    setHiredDate(hiredDate)
+    setEmail(email)
+    setStdJR(stdJR)
+  }, [])
+
+  useEffect(() => setAge(Number(age)), [birthday])
+  // useEffect(() => setCompanyBusinessUnit(companyBusinessUnit), [companyBusinessUnit])
+  // useEffect(() => setCompanyJobRole(companyJobRole), [companyJobRole])
+  // useEffect(() => setCompanySector(companySector), [companySector])
+  // useEffect(() => setGender(gender), [gender])
+  // useEffect(() => setCompanyBusinessUnit(companyBusinessUnit), [companyBusinessUnit])
+  // useEffect(() => setHiredDate(hiredDate), [hiredDate])
+  // useEffect(() => setEmail(email), [email])
+  // useEffect(() => {
+  //   setPreValues({
+  //     ...preValues,
+  //     email: companySelectedData?.headQuartersMainContactEmail?.toString().slice(companySelectedData?.headQuartersMainContactEmail?.toString().indexOf('@', 0), companySelectedData?.headQuartersMainContactEmail?.toString().length)
+  //   })
+  // }, [companySelectedData])
+  // console.log('preValues\n', preValues)
+  console.info('companyJobRoleSelected=', companyJobRole)
+  console.info('idCompanyJobRole=', allCJRD.find(() => companyJobRole)?.key)
+
+  /*
+    idCompanyBusinessUnit
+    companyBusinessUnitDescription
+  */
+
+  console.info('idCompanyBusinessUnit=', allBUFC.find(() => companyBusinessUnit)?.key)
+  console.info('companyBusinessUnitDescription=', companyBusinessUnit)
+
+  console.info('genderSelected=', gender)
+  console.info('companyBusinessUnit\n', companyBusinessUnit)
+  console.info('hiredDate=', hiredDate)
+  console.info('age=', age)
+  console.info('idCompanySector=', allCS.find(() => companySector)?.key)
+  console.info('companySectorDescription=', companySector)
+  console.info('birthday=', birthday)
+  console.info('stdJR=', stdJR)
+  console.info('idStandardJobRole=', allSJR.find(() => stdJR)?.key)
 
   const handleAge = (birthday) => {
     let years
@@ -163,45 +270,67 @@ export const AddNewUserScreen = (superCreator) => {
       return 0
     }
     if (years > 1000) years = 0
-    useEffect(() => setAge(years), [])
-    // console.info('years= ', years)
-    return years
+    useEffect(() => setAge(Number(years)), [birthday])
+    return Number(years)
   }
-
   const onAddNewUserPressed = async (useFormData) => {
+    setSave(true)
+    console.info('useFormData\n', useFormData)
     try {
       await addNewUser(
         {
           variables:
             {
-              ...useFormData
+              // Eliminar el useFormData y colocar los valores uno a uno a mano
+              ...useFormData,
+              idcompanyJobRole: allCJRD.find(() => companyJobRole).key,
+              idCompanyBusinessUnit: allBUFC.find(() => companyBusinessUnit).key,
+              idCompanySector: allCS.find(() => companySector).key,
+              birthday,
+              companyBusinessUnitDescription: companyBusinessUnit,
+              companyJobRoleDescription: companyJobRole,
+              companySectorDescription: companySector,
+              gender,
+              hiredDate,
+              idStandardJobRole: allSJR.find(() => stdJR).key,
+              standardJobRoleDescription: stdJR,
+              age: Number(age)
             }
         })
+      setSave(false)
+      Alert.alert('New user added 💪')
     } catch (error) {
+      setSave(false)
       console.error(error.message)
     }
   }
   const today = new Date()
   const startDate = getFormatedDate(today.setDate(today.getDate()), 'YYYY/MM/DD')
-  useEffect(() => setAge(age), [])
   return (
     <ScrollView>
       <View style={styles.root}>
 
         <CustomInput name='idEmployee' extraTitle='Employee Id' placeholder='✏️' control={control} rules={CIRules('Employee Id', 3)} />
-        <CustomInput name='password' extraTitle='password' placeholder='✏️' control={control} rules={CIRules('password', 6)} secureTextEntry />
+        <CustomInput name='password' extraTitle='password' placeholder='✏️' control={control} rules={CIRules('password', 5)} secureTextEntry />
         <CustomInput name='firstName' extraTitle='First Name' placeholder='✏️' control={control} rules={CIRules('First Name', 3)} />
-        <CustomInput name='secondName' extraTitle='Second Name' placeholder='✏️' control={control} rules={CIRules('Second Name', 3)} />
+        <CustomInput name='secondName' extraTitle='Second Name' placeholder='✏️' control={control} rules={CIRules('Second Name', 0)} />
         <CustomInput name='lastName' extraTitle='Last Name' placeholder='✏️' control={control} rules={CIRules('Last Name', 3)} />
-        <CustomInput name='secondLastName' extraTitle='Second Last Name' placeholder='✏️' control={control} rules={CIRules('Second Last Name', 3)} />
+        <CustomInput name='secondLastName' extraTitle='Second Last Name' placeholder='✏️' control={control} rules={CIRules('Second Last Name', 0)} />
         <CustomInput name='nickName' extraTitle='nickname' placeholder='✏️' control={control} rules={CIRules('nickname', 3)} />
         <CustomInput name='email' extraTitle='email' placeholder='✏️' control={control} rules={CIRules('email', 8)} />
-        <CustomInput name='phone' extraTitle='phone' placeholder='✏️' keyboardType={numericKeyboard} rules={CIRules('phone', 6)} control={control} />
+        <CustomInput name='phone' extraTitle='phone' placeholder='✏️' control={control} rules={CIRules('phone', 6)} />
+        {companySector !== undefined && <Text>Company Sector:</Text>}
+        <CustomSelectList name='companySectorDescription' control={control} data={allCS} setSelected={setCompanySector} placeholder='🔠 CompanySector' />
+        {stdJR !== '' && <Text>Standard Job Role:</Text>}
+        <CustomSelectList name='standardJobRoleDescription' control={control} data={allSJR} setSelected={setStdJR} placeholder='📦 Standard Job Role' />
+        {companyJobRole && <Text>Company Job Role:</Text>}
+        <CustomSelectList name='companyJobRoleDescription' control={control} data={allCJRD} setSelected={setCompanyJobRole} placeholder='💼 Company Job Role' />
+        {gender !== '' && <Text>Gender:</Text>}
+        <CustomSelectList name='gender' control={control} data={genderList} setSelected={setGender} placeholder='👤 Gender' />
+        {companyBusinessUnit !== '' && <Text>Company Business Unit:</Text>}
+        <CustomSelectList name='companyBusinessUnitDescription' control={control} data={allBUFC} setSelected={setCompanyBusinessUnit} placeholder='🏢 Company Business Unit' />
 
-        <CustomSelectList name='companyJobRoleDescription' control={control} data={allCJRD} setSelected={setCompanyJobRoleSelected} placeholder='Job Role' />
-        <CustomSelectList name='gender' control={control} data={genderList} setSelected={setGenderSelected} placeholder='Gender' />
-
-        <Text style={styles.text}>Birthday: 🎂 {birthday} 🎂, edad  <Text name='age' style={styles.text}>{handleAge(birthday)}</Text> </Text>
+        <Text style={styles.text}>Birthday: 🎂 {birthday} 🎂, edad  <Text control={control} name='age' style={styles.text}>{handleAge(birthday)}</Text> </Text>
         <DatePicker mode='calendar' name='birthday' onDateChange={val => handleBirthday(val)} control={control} />
 
         <Text style={styles.text}>Hired date: 🏭 {hiredDate} 🏭 </Text>
@@ -216,8 +345,9 @@ export const AddNewUserScreen = (superCreator) => {
         }
         <CustomCheckBox name='active' control={control} title='Is this user active?' />
         <ErrorText errors={errors} />
+        <CustomActivityIndicator visible={save} />
         {
-          allowAddNewUser && <Button onPress={onAddNewUserPressed} disabled={!allowAddNewUser} title={`Add New ${dataContract.companyName} User`} />
+          allowAddNewUser && <Button onPress={handleSubmit(onAddNewUserPressed)} disabled={!allowAddNewUser} title={`Add New User 👷, ${usersLeft} left`} />
         }
       </View>
 
@@ -313,7 +443,8 @@ export const EditUserScreen = (superCreator) => {
           setSelected={(val) => {
             getDataFromSelectedUser({ variables: { nickName: val.slice(val.indexOf(' | ', 0) + 3) } })
             setUserSelected(val.slice(val.indexOf(' | ', 0) + 3))
-          }} placeholder='🔽 Select user'
+          }}
+          placeholder='🔽 Select user'
         />
         {
           userSelected && defaultValues.idUser && <UserMeditScreen defaultValues={defaultValues} superUser={superUser} companySelected={companySelected} />
@@ -351,6 +482,5 @@ const styles = StyleSheet.create({
 
     paddingHorizontal: 0,
     marginVertical: 5
-
   }
 })

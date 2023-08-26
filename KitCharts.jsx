@@ -9,29 +9,33 @@ import {
 } from 'react-native-chart-kit'
 
 const screenWidth = Dimensions.get('window').width - 5
-const screenHeight = Dimensions.get('window').height / 3
+// const screenHeight = Dimensions.get('window').height / 3
 
-export const MyKitLineChart = () => {
+export const MyKitLineChart = ({ data, height = 200, visible = true }) => {
+  if (!visible) return
+  if (!data) {
+    data = {
+      labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+      datasets: [
+        {
+          data: [
+            Math.random() * 100,
+            Math.random() * 100,
+            Math.random() * 100,
+            Math.random() * 100,
+            Math.random() * 100,
+            Math.random() * 100
+          ]
+        }
+      ]
+    }
+  }
   return (
   // En esta parte va el gráfico
     <LineChart
-      data={{
-        labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-        datasets: [
-          {
-            data: [
-              Math.random() * 100,
-              Math.random() * 100,
-              Math.random() * 100,
-              Math.random() * 100,
-              Math.random() * 100,
-              Math.random() * 100
-            ]
-          }
-        ]
-      }}
+      data={data}
       width={screenWidth} // from react-native
-      height={screenHeight}
+      height={height}
       yAxisLabel='$'
       yAxisSuffix='k'
       yAxisInterval={2} // optional, defaults to 1
@@ -62,44 +66,47 @@ export const MyKitLineChart = () => {
   )
 }
 
-export const MyKitPieChart = () => {
-  const data = [
-    {
-      name: 'Seoul',
-      population: 21500000,
-      color: 'rgba(131, 167, 234, 1)',
-      legendFontColor: '#7F7F7F',
-      legendFontSize: 15
-    },
-    {
-      name: 'Toronto',
-      population: 2800000,
-      color: '#F00',
-      legendFontColor: '#7F7F7F',
-      legendFontSize: 15
-    },
-    {
-      name: 'Beijing',
-      population: 527612,
-      color: 'red',
-      legendFontColor: '#7F7F7F',
-      legendFontSize: 15
-    },
-    {
-      name: 'New York',
-      population: 8538000,
-      color: 'magenta',
-      legendFontColor: '#7F7F7F',
-      legendFontSize: 15
-    },
-    {
-      name: 'Moscow',
-      population: 11920000,
-      color: 'rgb(0, 0, 255)',
-      legendFontColor: '#7F7F7F',
-      legendFontSize: 15
-    }
-  ]
+export const MyKitPieChart = ({ data, height = 200, visible = true }) => {
+  if (!visible) return
+  if (!data) {
+    data = [
+      {
+        name: 'Seoul',
+        population: 21500000,
+        color: 'rgba(131, 167, 234, 1)',
+        legendFontColor: '#7F7F7F',
+        legendFontSize: 15
+      },
+      {
+        name: 'Toronto',
+        population: 2800000,
+        color: '#F00',
+        legendFontColor: '#7F7F7F',
+        legendFontSize: 15
+      },
+      {
+        name: 'Beijing',
+        population: 527612,
+        color: 'red',
+        legendFontColor: '#7F7F7F',
+        legendFontSize: 15
+      },
+      {
+        name: 'New York',
+        population: 8538000,
+        color: 'magenta',
+        legendFontColor: '#7F7F7F',
+        legendFontSize: 15
+      },
+      {
+        name: 'Moscow',
+        population: 11920000,
+        color: 'rgb(0, 0, 255)',
+        legendFontColor: '#7F7F7F',
+        legendFontSize: 15
+      }
+    ]
+  }
 
   const chartConfig = {
     color: (opacity = 0.1) => `rgba(26, 26, 146, ${opacity})`
@@ -109,7 +116,7 @@ export const MyKitPieChart = () => {
     <PieChart
       data={data}
       width={screenWidth}
-      height={screenHeight * 1.2}
+      height={height}
       chartConfig={chartConfig}
       accessor='population'
       backgroundColor='white'
@@ -120,17 +127,20 @@ export const MyKitPieChart = () => {
   )
 }
 
-export const MyKitBarChart = () => {
-  const data = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-    datasets: [
-      {
-        data: [40, 45, 30, 60, 75, 43],
-        color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
-        strokeWidth: 2 // optional
-      }
-    ],
-    legend: ['Rainy Days'] // optional
+export const MyKitBarChart = ({ data, height = 250, visible = true }) => {
+  if (!visible) return
+  if (!data) {
+    data = {
+      labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+      datasets: [
+        {
+          data: [40, 45, 30, 60, 75, 43],
+          color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
+          strokeWidth: 2 // optional
+        }
+      ],
+      legend: ['Rainy Days'] // optional
+    }
   }
 
   const chartConfig = {
@@ -141,7 +151,7 @@ export const MyKitBarChart = () => {
     <BarChart
       data={data}
       width={screenWidth}
-      height={screenHeight}
+      height={height}
       chartConfig={chartConfig}
       // xLabelsOffset={true}
       // fromZero={true}
@@ -149,10 +159,14 @@ export const MyKitBarChart = () => {
   )
 }
 
-export const MyKitProgresiveRing = () => {
-  const data = {
-    labels: ['Swim', 'Bike', 'Run'], // optional
-    data: [0.2, 0.6, 0.8]
+export const MyKitProgresiveRing = ({ data, height = 250, visible = true }) => {
+  if (!visible) return
+  if (!data) {
+    console.info('____________________', data)
+    data = [{
+      labels: ['Swim', 'Bike', 'Run'], // optional
+      data: [0.2, 0.6, 0.8]
+    }]
   }
 
   const chartConfig = {
@@ -162,9 +176,9 @@ export const MyKitProgresiveRing = () => {
   return (
     <ProgressChart
       backgroundColor='black'
-      data={data}
+      data={data[0]}
       width={screenWidth}
-      height={screenHeight}
+      height={height}
       strokeWidth={16}
       radius={32}
       chartConfig={chartConfig}

@@ -24,9 +24,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
     =>  STANDARD JOB ROLE {SUJobRole} ☑️
     => Agregar o editar un rol de trabajo estándar ☑️
     ( en general me faltó probar que las mutaciones estén funcionando bien... aunque deberían)
-  => STANDARD TICKET {SUStandardTicket}
-    => Agregar o editar un ticket estándar
-  => NOTIFICATIONS {SUNotifications}
+  => STANDARD TICKET {SUStandardTicket} ☑️
+    => Agregar un ticket estándar ☑️
+    => Editar un ticket estándar 👎
+  => NOTIFICATIONS {SUNotifications} ⚠️
     => Enviar notificaciones a los "companyAppAdmin" por razones de contrato o de inminente actualización grande de la aplicación
     => Enviar notificaciones a los "usuarios finales" por x motivo...
 

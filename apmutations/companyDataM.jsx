@@ -7,7 +7,7 @@ import {
   Text,
   Alert
 } from 'react-native'
-import { useEffect, useState, useContext } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import CustomInput from '../components/CustomInput.js'
 import CustomCheckBox from '../components/CustomCheckBox.js'
@@ -17,7 +17,6 @@ import CustomSelectList from '../components/CustomSelectList.js'
 import CustomActivityIndicator from '../components/CustomActivityIndicator.js'
 import { useFindCompany } from '../hooks/companyDataQH.js'
 import { useFindContract } from '../hooks/companyContractQH.js'
-import { DataContext } from '../context/DataContext.js'
 
 const numericKeyboard = Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'number-pad'
 
@@ -48,8 +47,8 @@ mutation AddNewCompany($companyName: String!, $companyCategory: String!, $headQu
 `
 
 const addNewCompanyContractM = gql`
-mutation AddNewCompanyContract($companyName: String!, $hasCaAdmin: Boolean!, $amountOfCaa: Int!, $amountOfUsers: Int!, $amountOfChartsAllowed: Int!) {
-  addNewCompanyContract(companyName: $companyName, hasCAAdmin: $hasCaAdmin, amountOfCAA: $amountOfCaa, amountOfUsers: $amountOfUsers, amountOfChartsAllowed: $amountOfChartsAllowed) {
+mutation AddNewCompanyContract($idCompany: ID!, $companyName: String!, $hasCaAdmin: Boolean!, $amountOfCaa: Int!, $amountOfUsers: Int!, $amountOfChartsAllowed: Int!) {
+  addNewCompanyContract(idCompany: $idCompany, companyName: $companyName, hasCAAdmin: $hasCaAdmin, amountOfCAA: $amountOfCaa, amountOfUsers: $amountOfUsers, amountOfChartsAllowed: $amountOfChartsAllowed) {
     idContract
     idCompany
     companyName
@@ -90,7 +89,6 @@ const preValues = {
 }
 
 export const AddNewCompanyScreen = () => {
-  const { data } = useContext(DataContext)
   const [countrySelected, setCountrySelected] = useState('Argentina')
   const [categorySelected, setCategorySelected] = useState('Minning')
   const { control, handleSubmit, watch, formState: { errors } } = useForm(
@@ -104,6 +102,7 @@ export const AddNewCompanyScreen = () => {
   const [saveChanges, setSaveChanges] = useState(false)
   const onAddNewCompanyPressed = async (useFormData) => {
     setSaveChanges(true)
+    console.info('useFormData\n', useFormData)
     try {
       await addNewCompany(
         {
@@ -120,41 +119,35 @@ export const AddNewCompanyScreen = () => {
             headQuartersMainContactEmail: useFormData.headQuartersMainContactEmail,
             companyInternalDescription: useFormData.companyInternalDescription,
             companyLogo: useFormData.companyLogo
-          },
-          Authorization: {
-            Authorization: data.userToken
           }
         }
       )
+      const dNC = await dataNewCompany?.data?.addNewCompany?.idCompany
+      console.log('dataNewCompany.data.addNewCompany.idCompany\n', dNC)
       try {
-        const dNC = dataNewCompany
         await addNewCompanyContract(
           {
             variables:
             {
-              idCompany: dNC.idCompany,
-              hasCAAdmin: useFormData.hasCAAdmin,
-              amountOfCAA: useFormData.amountOfCAA,
-              amountOfUsers: useFormData.amountOfUsers,
-              amountOfChartsAllowed: useFormData.amountOfChartsAllowed
-            },
-            Authorization: {
-              Authorization: data.userToken
+              idCompany: String(dNC),
+              companyName: useFormData.companyName,
+              hasCaAdmin: useFormData.hasCAAdmin,
+              amountOfCaa: Number(useFormData.amountOfCAA),
+              amountOfUsers: Number(useFormData.amountOfUsers),
+              amountOfChartsAllowed: Number(useFormData.amountOfChartsAllowed)
             }
           }
         )
-        const newContract = dataNewCompanyContract
-        Alert.alert(`
-          ${newContract.companyName} has been added as a new CtrlA client 💪!\n
-          idContract= ${newContract.idContract}, Total Users allowed= ${newContract.amountOfUsers} \n
-          Amount of chart types allowed= ${newContract.amountOfChartsAllowed}. With \n
-          ${newContract.hasCAAdmin ? newContract.amountOfCAA : 'No Company App Admin by contract.'}
-        `)
+        const newContract = await dataNewCompanyContract?.data?.addNewCompanyContract
+        console.log('dataNewCompanyContract.data.addNewCompanyContract\n', newContract)
+        Alert.alert(`${newContract.companyName} is a new client! 💪`)
         setSaveChanges(false)
       } catch (error) {
+        setSaveChanges(false)
         console.error(error.message)
       }
     } catch (error) {
+      setSaveChanges(false)
       console.error(error.message)
     }
   }
@@ -178,13 +171,13 @@ export const AddNewCompanyScreen = () => {
       <CustomCheckBox name='hasCAAdmin' control={control} title='Has company App Admins?' />
       {
         hasCAAdmin && (
-          <CustomInput name='amountOfCAA' placeholder='Amount of Company App Admins' control={control} rules={CIRulesNumber('Chart width')} keyboardType={numericKeyboard} />
+          <CustomInput name='amountOfCAA' placeholder='Amount of Company App Admins' control={control} rules={CIRulesNumber('amountOfCAA', false, 4)} keyboardType={numericKeyboard} />
         )
       }
-      <CustomInput name='amountOfUsers' placeholder='Total number of users granted' control={control} rules={CIRulesNumber('Chart width')} keyboardType={numericKeyboard} />
-      <CustomInput name='amountOfChartsAllowed' placeholder='Number of Chart Types Granted' control={control} rules={CIRulesNumber('Chart width')} keyboardType={numericKeyboard} />
+      <CustomInput name='amountOfUsers' placeholder='Total number of users granted' control={control} rules={CIRulesNumber('amountOfUsers', true, 50)} keyboardType={numericKeyboard} />
+      <CustomInput name='amountOfChartsAllowed' placeholder='Number of Chart Types Granted' control={control} rules={CIRulesNumber('amountOfChartsAllowed', true, 4)} keyboardType={numericKeyboard} />
       <ErrorText errors={errors} />
-      <Button title='Add New Company' style={styles.button} onPress={handleSubmit(onAddNewCompanyPressed)} />
+      <Button title='Add New Company 💪' style={styles.button} onPress={handleSubmit(onAddNewCompanyPressed)} />
       <CustomActivityIndicator visible={saveChanges} />
     </View>
   )
@@ -232,7 +225,7 @@ mutation EditCompanyContract($idCompany: ID!, $idContract: ID, $companyName: Str
 `
 
 export const EditCompanyDataScreen = ({ companySelected }) => {
-  const { data } = useContext(DataContext)
+  // const { data } = useContext(DataContext)
 
   const [load, setLoad] = useState(true)
   const dataEditedCompany = useFindCompany(companySelected)

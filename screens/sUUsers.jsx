@@ -71,8 +71,8 @@ const SUUsers = () => {
             <>
               <DuoToggleSwitch
                 style={styles.DuoToggleSwitch}
-                primaryText='Add new user 👷‍♂️'
-                secondaryText='Edit user data ✏️'
+                primaryText='ADD NEW'
+                secondaryText='EDIT'
                 onPrimaryPress={handleNewUserScreen}
                 onSecondaryPress={() => setNewUserScreen(false)}
               />

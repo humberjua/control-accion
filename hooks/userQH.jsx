@@ -105,9 +105,13 @@ export const useAllUsersFromCompany = (companyName, isCompanyAppAdmin = null) =>
     return `Error... ${error}`
   }
 
-  const allUsersFromCompany = data.allUsersFromCompany// .map(el => el)
+  const allUsersFromCompany = data.allUsersFromCompany
 
-  return allUsersFromCompany
+  if (allUsersFromCompany) {
+    return allUsersFromCompany
+  } else {
+    return {}
+  }
 }
 
 /*

@@ -23,7 +23,7 @@ query AllStandardTickets {
 
 `
 
-export const AllStandardTickets = () => {
+export const useAllStandardTickets = () => {
   const { loading, error, data } = useQuery(allStandardTicketsQ)
   if (loading) {
     return 'Loading...'

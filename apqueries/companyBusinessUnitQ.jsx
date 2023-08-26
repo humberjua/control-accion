@@ -70,5 +70,5 @@ export const BusinessUnitsFrom = ({ companyName }) => {
     return `Error! ${error}`
   }
 
-  return data.businessUnitsFrom.map(el => JSON.stringify(el))
+  return data.businessUnitsFrom// .map(el => JSON.stringify(el))
 }

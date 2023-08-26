@@ -3,13 +3,15 @@ import {
   View,
   StyleSheet,
   Button,
-  Alert
+  Alert,
+  Text
 } from 'react-native'
 import { gql, useMutation } from '@apollo/client'
 import CustomInput from '../components/CustomInput'
 import { useForm } from 'react-hook-form'
 import { CIRules } from '../components/CIRules.js'
 import CustomActivityIndicator from '../components/CustomActivityIndicator.js'
+import CustomPaperListAcordion from '../components/CustomListAcordionPaper'
 
 const editStandardTicketM = gql`
 mutation EditStandardTicket($idStandardTicket: ID!, $idEventProbability: ID, $eventProbabilityLevel: String, $eventProbabilityDescription: String, $idEventConsequence: String, $eventConsequenceLevel: Int, $eventConsequenceDescription: String, $standardTicketDescription: String, $format1Image: String, $format2Image: String, $format3Image: String, $format1Video: String, $format2Video: String, $format3Video: String, $maxVideoDuration: Int) {
@@ -35,7 +37,12 @@ mutation EditStandardTicket($idStandardTicket: ID!, $idEventProbability: ID, $ev
 `
 
 export const EditStandardTicketMEdit = ({ defaultValues }) => {
-
+  return (
+    <View style={styles.root}>
+      <Text>You can't edit standard tickets yet</Text>
+      <Text>{JSON.stringify(defaultValues)}</Text>
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({

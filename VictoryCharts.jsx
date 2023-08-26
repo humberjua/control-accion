@@ -36,7 +36,17 @@ const screenWidth = Dimensions.get('screen').width
 const screenHeight = Dimensions.get('screen').height
 const keys = [Math.random(), Math.random(), Math.random(), Math.random(), Math.random()]
 
-export const MyVictoryChartBar = ({ data = {}, xLegend = 'x', yLegend = 'y', duration = 2000, animation = 'elasticIn' }) => {
+export const MyVictoryChartBar = ({ data = {}, xLegend = 'x', yLegend = 'y', duration = 2000, animation = 'elasticIn', visible = true }) => {
+  if (!visible) return
+  if (!data) {
+    data = [
+      { x: 1, y: 2, y0: 1 },
+      { x: 2, y: 3, y0: 2 },
+      { x: 3, y: 5, y0: 2 },
+      { x: 4, y: 4, y0: 3 },
+      { x: 5, y: 6, y0: 3 }
+    ]
+  }
   return (
     <View style={styles.container}>
 
@@ -109,19 +119,22 @@ export const MyVictoryChartBar = ({ data = {}, xLegend = 'x', yLegend = 'y', dur
   )
 }
 
-export const MyVictoryHistogram = () => {
-  const data = [
-    { x: 1 }, // Cuenta las ocurrencias de un valor, graficará 1 ocurrencia de x=1, 1 de x=2 y
-    { x: 2 }, // 2 ocurrencias de x=5
-    { x: 5 },
-    { x: 5 }
-  ]
-
+export const MyVictoryHistogram = ({ data, height = 300, visible = true }) => {
+  if (!visible) return
+  if (!data) {
+    data = [
+      { x: 1 }, // Cuenta las ocurrencias de un valor, graficará 1 ocurrencia de x=1, 1 de x=2 y
+      { x: 2 }, // 2 ocurrencias de x=5
+      { x: 5 },
+      { x: 5 }
+    ]
+  }
   return (
     <View style={styles.histogram}>
       <VictoryChart
         domainPadding={{ x: 2 }}
         key={keys[1]}
+        height={height}
       >
         <VictoryHistogram
           style={{ data: { fill: '#c43a31' } }}
@@ -193,18 +206,20 @@ export const MyVictoryHistogram = () => {
   )
 }
 
-export const MyVictoryBoxPlot = () => {
-  const data = [
-    { x: 1, y: [1, 2, 3, 5] },
-    { x: 2, y: [3, 2, 8, 10] },
-    { x: 3, y: [2, 8, 6, 5] },
-    { x: 4, y: [1, 3, 2, 9] }
-  ]
-
+export const MyVictoryBoxPlot = ({ data, height = 300, visible = true }) => {
+  if (!visible) return
+  if (!data) {
+    data = [
+      { x: 1, y: [1, 2, 3, 5] },
+      { x: 2, y: [3, 2, 8, 10] },
+      { x: 3, y: [2, 8, 6, 5] },
+      { x: 4, y: [1, 3, 2, 9] }
+    ]
+  }
   if (Platform.OS === 'web') {
     return (
       <View style={styles.boxplot}>
-        <VictoryChart domainPadding={10} key={keys[2]}>
+        <VictoryChart domainPadding={10} key={keys[2]} height={height}>
           <VictoryBoxPlot
             horizontal
             labels
@@ -292,14 +307,17 @@ export const MyVictoryBoxPlot = () => {
   }
 }
 
-export const MyVictoryArea = () => {
-  const data = [
-    { x: 1, y: 1, y0: 0 },
-    { x: 2, y: 3, y0: 1 },
-    { x: 3, y: 5, y0: 1 },
-    { x: 4, y: 4, y0: 2 },
-    { x: 5, y: 6, y0: 2 }
-  ]
+export const MyVictoryArea = ({ data, height = 300, visible = true }) => {
+  if (!visible) return
+  if (!data) {
+    data = [
+      { x: 1, y: 1, y0: 0 },
+      { x: 2, y: 3, y0: 1 },
+      { x: 3, y: 5, y0: 1 },
+      { x: 4, y: 4, y0: 2 },
+      { x: 5, y: 6, y0: 2 }
+    ]
+  }
 
   return (
     <View style={styles.area}>
@@ -307,6 +325,7 @@ export const MyVictoryArea = () => {
         theme={VictoryTheme.material}
         flex={1}
         key={keys[3]}
+        height={height}
       >
         <VictoryArea
           interpolation='natural'
@@ -371,16 +390,21 @@ export const MyVictoryArea = () => {
   )
 }
 
-export const MyVictoryVoronoi = () => {
-  const data = [
-    { x: 1, y: 2 },
-    { x: 2, y: 2 },
-    { x: 3, y: 5 },
-    { x: 4, y: 4 },
-    { x: 5, y: 7 }
-  ]
+export const MyVictoryVoronoi = ({ data, height = 300, domain, visible }) => {
+  if (!visible) return
+  if (!data) {
+    data = [
+      { x: 1, y: 2 },
+      { x: 2, y: 2 },
+      { x: 3, y: 5 },
+      { x: 4, y: 4 },
+      { x: 5, y: 7 }
+    ]
+  }
 
-  const domain = { x: [0, 5], y: [0, 7] }
+  if (!domain) {
+    domain = { x: [0, 5], y: [0, 7] }
+  }
 
   return (
     <View>
@@ -389,6 +413,7 @@ export const MyVictoryVoronoi = () => {
         domain={domain}
         // height={screenHeight/2}
         // width={screenWidth}
+        height={height}
         key={keys[4]}
       >
         <VictoryVoronoi

@@ -8,7 +8,8 @@ const CustomSelectList = ({
   data,
   setSelected,
   placeholder,
-  rules = {}
+  rules = {},
+  save = 'value'
 }) => {
   return (
     <>
@@ -20,9 +21,13 @@ const CustomSelectList = ({
           render={({ field: { value, onChange } }) => (
             <SelectList
               onSelect={onChange}
-              setSelected={(val) => setSelected(val)}
+              setSelected={(val) => {
+                console.info('name desde el custom input', name)
+                console.info('val desde el custom input', val)
+                setSelected(val)
+              }}
               data={data}
-              save='value'
+              save={save}
               boxStyles={{ backgroundColor: 'lightgray' }}
               inputStyles={{ fontSize: 14 }}
               dropdownStyles={{ backgroundColor: 'lightgray' }}

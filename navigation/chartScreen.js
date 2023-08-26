@@ -1,3 +1,5 @@
+import { useContext, useState } from 'react'
+import { DataContext } from '../context/DataContext.js'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native'
 
@@ -5,24 +7,6 @@ import AllCharts from '../screens/allCharts.js'
 import MyCharts from '../screens/myCharts.js'
 
 const Tab = createMaterialTopTabNavigator()
-
-/*
-  ! https://reactnavigation.org/docs/themes/#built-in-themes Crear custom theme para esta navbar.
-  ! Alternativa #1: Crear funcion con las diferentes tab screen editadas para modo default y oscuro, para luego importarla a la funcion principal de Chart Screen.
-    Luego hacer lo mismo de isDarkMode de appThemes.js para checkear cual es el tema de color actual.
-  ! Alternativa #2: Crear un segundo appThemes, especifico para chartScreen con un segundo useState (reduce reitaracion de codigo a cambio de codigo optimizado para este Tab)
-  ! Alternativa #3: Convertir el useState + useEffect de appThemes en componentes script, para poder invocarlos por separado en appThemes y chartScreen para obtener
-  los valores de preferencia de pantalla del usuario (reciclar codigo a traves de componentes).
-*/
-
-// const defaultTheme = {
-//   ...DefaultTheme,
-//   colors: {
-//     ...DefaultTheme.colors,
-//     primary: 'rgb(63, 73, 72)',
-//     card: 'rgb(230, 241, 240)'
-//   }
-// }
 
 const darkTheme = {
   ...DarkTheme,
@@ -34,24 +18,48 @@ const darkTheme = {
 }
 
 export default function ChartScreen () {
+  const { data, setData } = useContext(DataContext)
+  const [show, setShow] = useState(true)
+
+  const handleChanges = () => {
+    setData({ ...data, fabView: true, userToChat: '' })
+  }
+  //  useEffect(() => setShow(true), [])
+  const handleShow = () => {
+    if (!show) {
+      setShow(true)
+    }
+  }
   return (
     <NavigationContainer
       independent
       theme={darkTheme}
+      onReady={handleChanges}
+      onStateChange={handleShow}
+      screenOptions={{
+        statusBarStyle: 'dark' // importante para que se vea el statusBar
+      }}
     >
 
       <Tab.Navigator
         initialRouteName='My Charts'
+        screenOptions={{
+          statusBarStyle: 'dark' // importante para que se vea el statusBar
+        }}
       >
 
         <Tab.Screen
           name='All Charts'
           component={AllCharts}
+          screenOptions={{
+            statusBarStyle: 'dark' // importante para que se vea el statusBar
+          }}
           options={{
             tabBarActiveTintColor: 'rgb(111, 247, 246)',
             tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' },
             tabBarScrollEnabled: false
           }}
+          onLayout={handleChanges}
         />
 
         <Tab.Screen
@@ -61,9 +69,11 @@ export default function ChartScreen () {
             tabBarActiveTintColor: 'rgb(111, 247, 246)',
             tabBarIndicatorStyle: { backgroundColor: 'rgb(110, 245, 244)' }
           }}
+          onLayout={handleChanges}
         />
 
       </Tab.Navigator>
+
     </NavigationContainer>
   )
 }

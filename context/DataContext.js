@@ -14,7 +14,9 @@ const userDefault = {
   idUser: '',
   loged: false,
   idCompany: '',
-  companyName: ''
+  companyName: '',
+  fabView: true,
+  userToChat: ''
 }
 
 export const DataProvider = ({ children }) => {

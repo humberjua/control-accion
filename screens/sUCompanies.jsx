@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View } from 'react-native'
+import { Text, View, StyleSheet } from 'react-native'
 import { useTheme } from 'react-native-paper'
 import { SelectList } from 'react-native-dropdown-select-list'
 import DuoToggleSwitch from 'react-native-duo-toggle-switch'
@@ -42,13 +42,13 @@ const SUCompanies = () => {
       <View theme={theme} name='SUCompanies'>
         <Text style={{ fontSize: 15, fontWeight: '700' }}>Clients Companies Administration's Screen</Text>
         <DuoToggleSwitch
-          primaryText='Add New Client 💪'
-          secondaryText='Edit clients data 👷‍♂️'
+          primaryText='ADD NEW'
+          secondaryText='EDIT'
           onPrimaryPress={() => {
             setSelected(false)
             setNewCompanyScreen(true)
           }}
-          style={{ width: 200, alignContent: 'center', alignSelf: 'center', gap: 0 }}
+          style={styles.DuoToggleSwitch}
           onSecondaryPress={() => setNewCompanyScreen(false)}
         />
         {
@@ -83,5 +83,21 @@ const SUCompanies = () => {
     </ScrollView>
   )
 }
+
+const styles = StyleSheet.create({
+  DuoToggleSwitch: {
+    width: 178,
+    height: 40,
+    alignSelf: 'center',
+    gap: 1,
+    borderStyle: 'solid',
+    borderWidth: 1,
+    direction: 'rtl',
+    elevation: 20,
+    backgroundColor: 'lightgray',
+    fontWeight: '500',
+    justifyContent: 'center'
+  }
+})
 
 export default SUCompanies
