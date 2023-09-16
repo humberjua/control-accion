@@ -3,13 +3,16 @@ import {
   View,
   StyleSheet,
   Button,
-  Alert
+  Alert,
+  Pressable,
+  Text
 } from 'react-native'
 import { gql, useMutation } from '@apollo/client'
 import CustomInput from '../components/CustomInput'
 import { useForm } from 'react-hook-form'
 import { CIRules } from '../components/CIRules.js'
 import CustomActivityIndicator from '../components/CustomActivityIndicator.js'
+import { TextSize } from 'victory-native'
 
 const editStandardSectorM = gql`
 mutation EditStandardSectorDescription($idStandardSector: ID!, $standardSectorDescription: String!) {
@@ -22,7 +25,7 @@ mutation EditStandardSectorDescription($idStandardSector: ID!, $standardSectorDe
 `
 
 export const StandardSectorMEdit = ({ defaultValues }) => {
-  console.info(defaultValues)
+  // console.info(defaultValues)
   const [load, setLoad] = useState(false)
   const [values, setValues] = useState(defaultValues)
   const { control, handleSubmit, watch, formState: { errors } } = useForm(
@@ -62,8 +65,17 @@ export const StandardSectorMEdit = ({ defaultValues }) => {
         rules={CIRules('standardSectorDescription', 3)}
         extraTitle='Edit Standard Sector Description'
       />
-      <CustomActivityIndicator visible={load} />
-      <Button title='Edit Selecetd Standard Job' onPress={onEditSelectedStandardSectorPressed} />
+      {load && <CustomActivityIndicator visible={load} />}
+      <Pressable
+        onPress={() => {
+          handleSubmit(onEditSelectedStandardSectorPressed)
+        }}
+        style={({ pressed }) => {
+          return { opacity: pressed ? 0.2 : 1 }
+        }}
+      >
+        <Text style={styles.button}>Save changes</Text>
+      </Pressable>
     </View>
   )
 }
@@ -80,7 +92,12 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: 'rgb(211,111,111)',
-    alignSelf: 'stretch',
-    borderRadius: '15'
+    borderRadius: 10,
+    fontSize: 18,
+    height: 30,
+    fontWeight: '500',
+    paddingLeft: 5,
+    paddingRight: 5,
+    color: 'lightgray'
   }
 })

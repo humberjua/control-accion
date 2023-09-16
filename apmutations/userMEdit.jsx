@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { gql, useMutation } from '@apollo/client'
-import {
-  View,
-  Button,
-  StyleSheet,
-  Platform,
-  Alert,
-  Image,
-  Pressable
-} from 'react-native'
+import { View, Button, StyleSheet, Platform, Alert, Image, Pressable } from 'react-native'
 import { useForm } from 'react-hook-form'
 import CustomInput from '../components/CustomInput.js'
 import CustomCheckBox from '../components/CustomCheckBox.js'
@@ -122,10 +114,10 @@ export const UserMeditScreen = ({ defaultValues, superUser, companySelected }) =
       aspect: [4, 3],
       quality: 1
     })
-    console.log(result)
+    // console.log(result)
     try {
       if (!result.canceled && hasGalleryPermission) {
-        setImage(result.uri)
+        setImage(result.assets[0].uri)
       }
     } catch (error) {
       console.info(error)
@@ -133,15 +125,16 @@ export const UserMeditScreen = ({ defaultValues, superUser, companySelected }) =
   }
   const handleChangeImageFromCamera = async () => {
     const result2 = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1
     })
-    console.log(result2)
+    // console.log(result2)
 
-    if (!result2.canceled && hasGalleryPermission) {
+    if (!result2.canceled && hasCameraPermission) {
       try {
-        setImage(result2.uri)
+        setImage(result2.assets[0].uri)
       } catch (error) {
         console.info(error)
       }

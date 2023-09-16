@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { gql, useMutation, useLazyQuery } from '@apollo/client'
-import { View, ScrollView, Button, StyleSheet, Platform, Text, Alert } from 'react-native'
+import { View, ScrollView, Button, StyleSheet, Text, Alert } from 'react-native' // {Platform}
 import { useForm } from 'react-hook-form'
 import CustomInput from '../components/CustomInput.js'
 import CustomCheckBox from '../components/CustomCheckBox.js'
@@ -18,7 +18,7 @@ import { UserMeditScreen } from '../apmutations/userMEdit.jsx'
 import { SelectList } from 'react-native-dropdown-select-list'
 import { BusinessUnitsFrom } from '../apqueries/companyBusinessUnitQ.jsx'
 import { useAllStandardJobRoles } from '../hooks/standardJobRoleQH.js'
-const numericKeyboard = Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'number-pad'
+// const numericKeyboard = Platform.OS === 'ios' ? 'numbers-and-punctuation' : 'number-pad'
 
 // const phoneKeyboard = 'phone-pad'
 
@@ -58,6 +58,42 @@ mutation AddNewUser($idEmployee: ID!, $password: String!, $firstName: String!, $
     age
     birthday
     gender
+  }
+}
+`
+const addNewUserConfigurationM = gql`
+mutation AddNewUserConfiguration($idUser: ID!, $idEmployee: ID!, $password: String!, $firstName: String!, $lastName: String!, $nickName: String!, $email: String!, $idCompany: ID!, $companyName: String!, $idCompanyBusinessUnit: ID!, $companyBusinessUnitDescription: String!, $idCompanySector: ID!, $companySectorDescription: String!, $idStandardJobRole: ID!, $standardJobRoleDescription: String!, $idcompanyJobRole: ID!, $companyJobRoleDescription: String!, $userProfileImage: String!, $theme: String!, $showNotificationsToLevel: Int!, $secondName: String, $secondLastName: String, $phone: String, $optionConfiguration1: String, $optionConfiguration2: String, $optionConfiguration3: String, $personalPhone: String, $personalEmail: String, $personalAddress: String, $aboutMe: String) {
+  addNewUserConfiguration(idUser: $idUser, idEmployee: $idEmployee, password: $password, firstName: $firstName, lastName: $lastName, nickName: $nickName, email: $email, idCompany: $idCompany, companyName: $companyName, idCompanyBusinessUnit: $idCompanyBusinessUnit, companyBusinessUnitDescription: $companyBusinessUnitDescription, idCompanySector: $idCompanySector, companySectorDescription: $companySectorDescription, idStandardJobRole: $idStandardJobRole, standardJobRoleDescription: $standardJobRoleDescription, idcompanyJobRole: $idcompanyJobRole, companyJobRoleDescription: $companyJobRoleDescription, userProfileImage: $userProfileImage, theme: $theme, showNotificationsToLevel: $showNotificationsToLevel, secondName: $secondName, secondLastName: $secondLastName, phone: $phone, optionConfiguration1: $optionConfiguration1, optionConfiguration2: $optionConfiguration2, optionConfiguration3: $optionConfiguration3, personalPhone: $personalPhone, personalEmail: $personalEmail, personalAddress: $personalAddress, aboutMe: $aboutMe) {
+    idUserConfiguration
+    idUser
+    idEmployee
+    firstName
+    secondName
+    lastName
+    secondLastName
+    nickName
+    email
+    phone
+    idCompany
+    companyName
+    idCompanyBusinessUnit
+    companyBusinessUnitDescription
+    idStandardJobRole
+    standardJobRoleDescription
+    idCompanySector
+    companySectorDescription
+    idcompanyJobRole
+    companyJobRoleDescription
+    userProfileImage
+    theme
+    showNotificationsToLevel
+    optionConfiguration1
+    optionConfiguration2
+    optionConfiguration3
+    personalPhone
+    personalEmail
+    personalAddress
+    aboutMe
   }
 }
 `
@@ -187,7 +223,8 @@ export const AddNewUserScreen = (superCreator) => {
   const [hiredDate, setHiredDate] = useState(watch('hiredDate'))
   const [age, setAge] = useState(watch('age'))
   const [usersLeft, setUsersLeft] = useState(0)
-  const [addNewUser] = useMutation(addNewUserM)
+  const [addNewUser, dataNewUser] = useMutation(addNewUserM)
+  const [addNewUserConfiguration, dataNewUserConfiguration] = useMutation(addNewUserConfigurationM)
   const [companyJobRole, setCompanyJobRole] = useState(false)
   const [gender, setGender] = useState('')
   const [showCAAUsers, setShowCAAUsers] = useState(false)
@@ -223,40 +260,6 @@ export const AddNewUserScreen = (superCreator) => {
   }, [])
 
   useEffect(() => setAge(Number(age)), [birthday])
-  // useEffect(() => setCompanyBusinessUnit(companyBusinessUnit), [companyBusinessUnit])
-  // useEffect(() => setCompanyJobRole(companyJobRole), [companyJobRole])
-  // useEffect(() => setCompanySector(companySector), [companySector])
-  // useEffect(() => setGender(gender), [gender])
-  // useEffect(() => setCompanyBusinessUnit(companyBusinessUnit), [companyBusinessUnit])
-  // useEffect(() => setHiredDate(hiredDate), [hiredDate])
-  // useEffect(() => setEmail(email), [email])
-  // useEffect(() => {
-  //   setPreValues({
-  //     ...preValues,
-  //     email: companySelectedData?.headQuartersMainContactEmail?.toString().slice(companySelectedData?.headQuartersMainContactEmail?.toString().indexOf('@', 0), companySelectedData?.headQuartersMainContactEmail?.toString().length)
-  //   })
-  // }, [companySelectedData])
-  // console.log('preValues\n', preValues)
-  console.info('companyJobRoleSelected=', companyJobRole)
-  console.info('idCompanyJobRole=', allCJRD.find(() => companyJobRole)?.key)
-
-  /*
-    idCompanyBusinessUnit
-    companyBusinessUnitDescription
-  */
-
-  console.info('idCompanyBusinessUnit=', allBUFC.find(() => companyBusinessUnit)?.key)
-  console.info('companyBusinessUnitDescription=', companyBusinessUnit)
-
-  console.info('genderSelected=', gender)
-  console.info('companyBusinessUnit\n', companyBusinessUnit)
-  console.info('hiredDate=', hiredDate)
-  console.info('age=', age)
-  console.info('idCompanySector=', allCS.find(() => companySector)?.key)
-  console.info('companySectorDescription=', companySector)
-  console.info('birthday=', birthday)
-  console.info('stdJR=', stdJR)
-  console.info('idStandardJobRole=', allSJR.find(() => stdJR)?.key)
 
   const handleAge = (birthday) => {
     let years
@@ -281,7 +284,6 @@ export const AddNewUserScreen = (superCreator) => {
         {
           variables:
             {
-              // Eliminar el useFormData y colocar los valores uno a uno a mano
               ...useFormData,
               idcompanyJobRole: allCJRD.find(() => companyJobRole).key,
               idCompanyBusinessUnit: allBUFC.find(() => companyBusinessUnit).key,
@@ -297,7 +299,32 @@ export const AddNewUserScreen = (superCreator) => {
               age: Number(age)
             }
         })
+      const dNU = await dataNewUser?.data?.addNewUser?.idUser
+      try {
+        await addNewUserConfiguration(
+          {
+            variables:
+            {
+              idUser: String(dNU),
+              ...dataNewUser,
+              showNotificationsToLevel: 3,
+              optionConfiguration1: '',
+              optionConfiguration2: '',
+              optionConfiguration3: '',
+              theme: 'light',
+              personalPhone: '',
+              personalEmail: '',
+              personalAddress: '',
+              aboutMe: ''
+            }
+          }
+        )
+      } catch (error) {
+        setSave(error)
+        console.error(error.message)
+      }
       setSave(false)
+      console.info('dataNewUserConfiguration\n', dataNewUserConfiguration)
       Alert.alert('New user added 💪')
     } catch (error) {
       setSave(false)

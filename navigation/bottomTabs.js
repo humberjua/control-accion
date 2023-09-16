@@ -4,7 +4,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import ChartScreen from './chartScreen'
 import ReportTabs from './reportTabs'
-import SettingsScreen from '../screens/settingsScreen'
+import SettingsScreen from '../screens/settings/SettingsScreen'
 import SuperUserScreen from '../screens/sUScreen.jsx'
 import CompnayAppAdminScreen from '../screens/cAAScreen.jsx'
 import { useMe } from '../hooks/userQH'
@@ -36,12 +36,12 @@ function MyTabs () {
     (luego, desde el BE se enviarán notificaciones a los dispositivos de los distintos usuarios, esto también se podrá hacer desde los usuarios "CompanyAppAdmin" y "SuperUser")
     😃==> useMe, para llenar la info del perfil del usuario
     😃==> según esta info de perfil, se habilitará o no para la carga los formularios propios de ("CompanyAppAdmin", o de "SuperUser")
-    👷‍♂️☑️☑️☑️==> Armar las pantallas correspondientes a las pantallas propias del "SuperUser"
+    👷‍♂️☑️☑️☑️☑️==> Armar las pantallas correspondientes a las pantallas propias del "SuperUser"
     👷‍♂️👷‍♂️👷‍♂️👷‍♂️==> Armar las pantallas correspondientes a las pantallas propias del "CompanyAppAdmin"
-    👷‍♂️==> useAllChartsFromCompany, para armar la lista completa de charts que le figurarán como disponibles al usuario de la empresa logueada.
-    👷‍♂️==> loged users from my ambit (myContacts), sirve para la pantalla "Chat". Trabajo para BE
-    👷‍♂️👷‍♂️==> myChatDataLoged... o algo así, que traiga la información de historial del chat del usuario y ponga con un numero en rojo sobre el icono la cantidad de chats no leidos
-    ==> Luego, lo correspondiente al boton (plus) y a la pantalla Search, estos recién se deberá cargar una vez que se presionen.
+    👷‍♂️☑️☑️==> useAllChartsFromCompany, para armar la lista completa de charts que le figurarán como disponibles al usuario de la empresa logueada.
+    👷‍♂️☑️==> loged users from my ambit (myContacts), sirve para la pantalla "Chat". Trabajo para BE
+    👷‍♂️👷‍♂️☑️==> myChatDataLoged... o algo así, que traiga la información de historial del chat del usuario y ponga con un numero en rojo sobre el icono la cantidad de chats no leidos
+    ==>❎ Luego, lo correspondiente al boton (plus) y a la pantalla Search, estos recién se deberá cargar una vez que se presionen.
 
     */
   AsyncStorage.flushGetRequests()
